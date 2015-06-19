@@ -1,30 +1,38 @@
+# Dependencies
+markdown:         redcarpet
+redcarpet:
+  extensions: ["tables"]
+
+pygments:         true
+
 # Permalinks
-#
-# Use of `relative_permalinks` ensures post links from the index work properly.
-permalink:           pretty
-relative_permalinks: true
+permalink:        pretty
 
 # Setup
-title:               Ali Aliev blog
-tagline:             Python Django PostgreSQL
-url:                 http://aliev.me
-paginate:            1
-baseurl:             ""
+title:            Ali Aliev
+tagline:          'Python, Django, PostgreSQL'
+url:              http://aliev.me
+shorturl:         aliev.me
 
-# Assets
-#
-# We specify the directory for Jekyll so we can use @imports.
-sass:
-  sass_dir:          _sass
-  style:            :compressed
-
-# About/contact
 author:
-  name:              Ali Aliev
-  url:               https://twitter.com/ali_aliev
-  email:             ali@aliev.me
+  name:           'Ali Aliev'
+  url:            https://twitter.com/ali_aliev
+
+paginate:         1
 
 # Custom vars
-version:             1.0.0
+version:          1.0.0
+
 github:
-  repo:              https://github.com/aliev
+  repo:           github.com/aliev/aliev.github.io
+
+# This is the list of pages to include in the header of the website.
+pages_list:       
+  About: '/about/'
+  Archive: '/archive/'
+  Feed: '/atom.xml'
+
+# Allow URL Redirects: 
+#  * https://help.github.com/articles/redirects-on-github-pages
+gems:
+  - jekyll-redirect-from
