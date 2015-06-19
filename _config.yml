@@ -6,7 +6,7 @@ relative_permalinks: true
 
 # Setup
 title:               Ali Aliev blog
-tagline:             Ali Aliev blog
+tagline:             Python Django PostgreSQL
 url:                 http://aliev.me
 paginate:            1
 baseurl:             ""
