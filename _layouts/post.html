@@ -7,6 +7,23 @@ layout: default
   <time datetime="{{ page.date | date_to_xmlschema }}" class="post-date">{{ page.date | date_to_string }}</time>
   {{ content }}
   <div class="post-date">{% for tags in page.tags %}{{ tags }} {% endfor %}</div>
+  {% if page.category == 'ru' %}
+  Если вам понравилась данная статья вы можете
+  <a href="https://twitter.com/intent/tweet?url={{ site.url }}{{ page.url }}&text={{ page.title }}&via=ali_aliev" 
+      target="_blank">
+      поделиться ею с вашими друзьями</a> 
+  или 
+  <a href="https://twitter.com/ali_aliev">
+      подписаться на мой аккаунт в Twitter</a>!
+  {% else if page.category == 'en' %}
+  If you liked this post, you can
+  <a href="https://twitter.com/intent/tweet?url={{ site.url }}{{ page.url }}&text={{ page.title }}&via=ali_aliev" 
+      target="_blank">
+      share it with your followers</a> 
+  or 
+  <a href="https://twitter.com/ali_aliev">
+      follow me on Twitter</a>!
+  {% endif %}
   {% include comments.html %}
 </article>
 
