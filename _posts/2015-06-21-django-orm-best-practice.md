@@ -29,12 +29,12 @@ if users_at_city:
     ...
 {% endhighlight %}
 
-Строка с ператором if выполнит запрос QuerySet, даже если вы никогда не собираетесь использовать результаты данного запроса. Для этих целей было бы целесообразно воспользоваться методом exists():
+Строка с оператором if выполнит запрос QuerySet, даже если вы никогда не собираетесь использовать результаты данного запроса. Для этих целей было бы целесообразно воспользоваться методом exists():
 
 {% highlight python %}
-users_at_a_city = User.objects.filter(city='Somecity')
+users_at_city = User.objects.filter(city='Somecity')
 
-if users_at_a_city():
+if users_at_city():
     ...
 {% endhighlight %}
 
