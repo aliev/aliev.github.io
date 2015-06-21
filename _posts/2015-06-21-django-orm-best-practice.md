@@ -34,7 +34,7 @@ if users_at_city:
 {% highlight python %}
 users_at_city = User.objects.filter(city='Somecity')
 
-if users_at_city():
+if users_at_city.exists():
     ...
 {% endhighlight %}
 
