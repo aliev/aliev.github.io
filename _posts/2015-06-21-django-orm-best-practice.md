@@ -48,8 +48,8 @@ if users_at_city.exists():
 Пример:
 
 {% highlight python %}
-user = User.objects.all()
-if user.exists():
+users = User.objects.all()
+if users.exists():
     for user in users.iterator():
         ...
 {% endhighlight %}
