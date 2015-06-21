@@ -2,7 +2,7 @@
 layout: page
 ---
 
-<img src="https://s.gravatar.com/avatar/0c599bcadc37adf2e64ad7e33cf5464b?s=100" style="float: left; margin:20px">
+<img src="https://s.gravatar.com/avatar/0c599bcadc37adf2e64ad7e33cf5464b?s=100" style="float: right;">
 
 <a href="http://github.com/aliev">
     <i class="fa fa-github"></i> Github
