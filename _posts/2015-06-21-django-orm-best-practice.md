@@ -53,5 +53,3 @@ if users.exists():
     for user in users.iterator():
         ...
 {% endhighlight %}
-
-По мотивам статьи: http://blog.etianen.com/blog/2013/06/08/django-querysets/
