@@ -9,7 +9,7 @@ title:               Ali Aliev blog
 tagline:             "Python, Django, PostgreSQL"
 url:                 http://aliev.me
 paginate:            5
-baseurl:             "http://aliev.me"
+baseurl:             ""
 
 # Assets
 #
@@ -23,6 +23,7 @@ author:
   name:              Ali Aliev
   url:               https://twitter.com/ali_aliev
   email:             shamkir@gmail.com
+  google_plus:       https://plus.google.com/u/0/106445062387931379068
 
 # Custom vars
 version:             1.0.0

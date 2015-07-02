@@ -25,4 +25,10 @@
 
   <!-- Font awesome -->
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  <!-- Authorship details. -->
+  <!-- Output author details if some exist. -->
+  {% if site.author.google_plus %}
+  <!-- Link to the authors Google page. -->
+  <link rel="author" href="{{ site.author.google_plus }}?rel=author" />
+  {% endif %}
 </head>
