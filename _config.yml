@@ -9,7 +9,7 @@ title:               Ali Aliev blog
 tagline:             "Python, Django, PostgreSQL"
 url:                 http://aliev.me
 paginate:            5
-baseurl:             ""
+baseurl:             "http://aliev.me"
 
 # Assets
 #
