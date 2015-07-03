@@ -17,11 +17,10 @@ layout: null
 
  {% for post in site.posts %}
  <entry>
-   <title>{{ post.title }}</title>
+   <title>{{ post.title }} {% for tag in post.tags %} #{{ tag }} {% endfor %}</title>
    <link href="{{ site.url }}/{{ site.baseurl }}/{{ post.url }}"/>
    <updated>{{ post.date | date_to_xmlschema }}</updated>
    <id>{{ site.url }}{{ post.id }}</id>
-   <tags>{% for tag in post.tags %} {{ tag }} {% endfor %}</tags>
    <content type="html">{{ post.content | xml_escape }}</content>
  </entry>
  {% endfor %}
