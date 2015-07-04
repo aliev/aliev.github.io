@@ -1,19 +1,23 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from __future__ import print_function
 
 import sys
-import datetime
+from datetime import datetime
 from slugify import slugify
 
 
 try:
     if sys.argv[1] == 'post':
-        date = datetime.datetime.now()
+        date = datetime.now()
         slug = slugify(sys.argv[2])
-        open('_posts/{date}-{slug}.md'.format(
+        file = open('_posts/{date}-{slug}.md'.format(
             date=date.strftime("%Y-%m-%d"),
             slug=slug
         ), 'w')
+        file.close()
     else:
         pass
 except IndexError:
-    print "./new post \"slug\""
+    print("./new post \"slug\"")
