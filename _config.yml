@@ -11,7 +11,7 @@ email: ali@aliev.me
 #blog logo
 logo: "https://s.gravatar.com/avatar/0c599bcadc37adf2e64ad7e33cf5464b?s=100"
 # blog cover
-cover: "/assets/images/cA4aKEIPQrerBnp1yGHv_IMG_9534-3-2.jpg"
+cover: "/assets/images/img.jpg"
 
 name: 'Ali Aliev'
 author: 'Ali Aliev'
@@ -39,7 +39,7 @@ social:
     share_link: "&amp;u="
 
   - icon:	github
-    url:	https://github.com/ali_aliev
+    url:	https://github.com/aliev
     desc:	Fork me on github
     share_url:
     share_title:
