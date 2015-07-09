@@ -1,5 +1,7 @@
 ---
 layout: page
+title: About
+permalink: /about/
 ---
 
 <img src="https://s.gravatar.com/avatar/0c599bcadc37adf2e64ad7e33cf5464b?s=200" style="float: right;">

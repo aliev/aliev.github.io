@@ -1,37 +1,53 @@
-# Permalinks
-#
-# Use of `relative_permalinks` ensures post links from the index work properly.
-permalink:           pretty
-relative_permalinks: true
+# Build settings
+markdown: redcarpet
+highlighter: pygments
+  
+# Site settings
+title: "Ali Aliev"
+description: > # this means to ignore newlines until "email:"
+   All abount Python, PostgreSQL, Django
 
-# Setup
-title:               Ali Aliev blog
-tagline:             "Python, Django, PostgreSQL"
-url:                 http://aliev.me
-paginate:            5
-baseurl:             ""
+email: ali@aliev.me
+#blog logo
+logo: "https://s.gravatar.com/avatar/0c599bcadc37adf2e64ad7e33cf5464b?s=100"
+# blog cover
+cover: "/assets/images/cA4aKEIPQrerBnp1yGHv_IMG_9534-3-2.jpg"
 
-# Assets
-#
-# We specify the directory for Jekyll so we can use @imports.
-sass:
-  sass_dir:          _sass
-  style:            :compressed
+name: 'Ali Aliev'
+author: 'Ali Aliev'
+author_image: "http://s.gravatar.com/avatar/0c599bcadc37adf2e64ad7e33cf5464b?s=80"
 
-# About/contact
-author:
-  name:              Ali Aliev
-  url:               https://twitter.com/ali_aliev
-  email:             shamkir@gmail.com
-  google_plus:       https://plus.google.com/u/0/106445062387931379068
+paginate:	5
 
-# Custom vars
-version:             1.0.0
-github:
-  repo:              https://github.com/aliev
+url: "http://aliev.me" # the base hostname & protocol for your site
+baseurl: ""
 
-# This is the list of pages to include in the header of the website.
-pages_list:       
-  About: '/about/'
-  Archive: '/archive/'
-  Feed: '/atom.xml'
+# social icons and sharing options
+social:
+  - icon:	twitter
+    url:	https://twitter.com/aliev
+    desc: Follow me on twitter
+    share_url: http://twitter.com/share
+    share_title: ?text=
+    share_link: "&amp;url="
+
+  - icon:	facebook
+    url:	https://facebook.com/alievali
+    desc: Connect with me facebook
+    share_url: https://www.facebook.com/sharer.php
+    share_title: ?t=
+    share_link: "&amp;u="
+
+  - icon:	github
+    url:	https://github.com/ali_aliev
+    desc:	Fork me on github
+    share_url:
+    share_title:
+    share_link:
+
+  - icon:	google-plus
+    url:	https://plus.google.com/u/0/+alialievaliev/
+    desc:	Add me on google+
+    share_url:
+    share_title:
+    share_link:
