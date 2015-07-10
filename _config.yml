@@ -25,7 +25,7 @@ baseurl: ""
 # social icons and sharing options
 social:
   - icon:	twitter
-    url:	https://twitter.com/aliev
+    url:	https://twitter.com/ali_aliev
     desc: Follow me on twitter
     share_url: http://twitter.com/share
     share_title: ?text=
