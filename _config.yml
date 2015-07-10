@@ -48,6 +48,6 @@ social:
   - icon:	google-plus
     url:	https://plus.google.com/u/0/+alialievaliev/
     desc:	Add me on google+
-    share_url:
-    share_title:
-    share_link:
+    share_url: https://plus.google.com/share
+    share_link: "&amp;url="
+    share_title: ?title=
