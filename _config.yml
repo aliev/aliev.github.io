@@ -5,7 +5,7 @@ highlighter: pygments
 # Site settings
 title: "Ali Aliev"
 description: > # this means to ignore newlines until "email:"
-   All abount Python, PostgreSQL, Django
+   Programming, Music, Life
 
 email: ali@aliev.me
 #blog logo
