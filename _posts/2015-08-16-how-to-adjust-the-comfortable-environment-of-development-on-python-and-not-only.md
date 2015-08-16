@@ -164,14 +164,14 @@ Now we can see all the possibilities that provides fzf for Vim. I have defined s
 
 Best extension, which makes full Python IDE from your Vim! I'll not describe my jedi-vim settings (you can view them in [stuff.vim](https://github.com/aliev/vim/blob/master/stuff.vim#L15) file). I'll describe only jedi key bindings and commands:
 
-| Key Binding or command   | Action                                  |
-| ------------------------ | --------------------------------------- |
-| ```<leader>d```          | Goto definitions                        |
-| ```<leader>g```          | Goto assignments                        |
-| ```<leader>r```          | Renaming (refactoring)                  |
-| ```<leader>n```          | Shows all the usages of a name          |
-| ```K```                  | Show documentation                      |
-| ```:Pyimport module.path | Open module                             |
+| Key Binding or command      | Action                                  |
+| --------------------------- | --------------------------------------- |
+| ```<leader>d```             | Goto definitions                        |
+| ```<leader>g```             | Goto assignments                        |
+| ```<leader>r```             | Renaming (refactoring)                  |
+| ```<leader>n```             | Shows all the usages of a name          |
+| ```K```                     | Show documentation                      |
+| ```:Pyimport module.path``` | Open module                             |
 
 
 # The last words :)
