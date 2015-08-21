@@ -24,7 +24,7 @@ vim +BundleInstall +qall # Install all plugins
 
 Do not forget upgrade your vim to 7.4 version
 
-{% hoghlight bash %}
+{% highlight bash %}
 
 # For mac users
 brew install vim
