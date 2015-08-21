@@ -22,6 +22,16 @@ echo "source ~/.vim/vimrc" > .vimrc
 vim +BundleInstall +qall # Install all plugins
 {% endhighlight %}
 
+Do not forget upgrade your vim to 7.4 version
+
+{% hoghlight bash %}
+
+# For mac users
+brew install vim
+sudo mv /usr/bin/vim /usr/bin/vim73
+
+{% endhighlight %}
+
 This set of commands will install a basic list of extensions and Vundle - simple package manager.
 
 After restarting the editor you'll see something like this:
