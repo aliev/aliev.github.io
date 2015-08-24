@@ -18,7 +18,7 @@ cd ~
 git clone https://github.com/aliev/vim.git
 mv ~/vim ~/.vim
 echo "source ~/.vim/vimrc" > .vimrc
-vim +PlugInstall # Install all plugins
+vim +PlugInstall +qa # Install all plugins and exit
 {% endhighlight %}
 
 This set of commands will install a basic list of extensions by using vim-plug - simple package manager.
