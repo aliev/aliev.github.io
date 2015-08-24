@@ -21,7 +21,7 @@ echo "source ~/.vim/vimrc" > .vimrc
 vim +PlugInstall # Install all plugins
 {% endhighlight %}
 
-This set of commands will install a basic list of extensions and Vundle - simple package manager.
+This set of commands will install a basic list of extensions by using vim-plug - simple package manager.
 
 Do not forget upgrade your vim to 7.4 version
 
