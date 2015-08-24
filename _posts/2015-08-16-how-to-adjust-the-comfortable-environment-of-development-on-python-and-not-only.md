@@ -17,9 +17,8 @@ First we need to install base vim configuration. Just use the following commands
 cd ~
 git clone https://github.com/aliev/vim.git
 mv ~/vim ~/.vim
-git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
 echo "source ~/.vim/vimrc" > .vimrc
-vim +BundleInstall +qall # Install all plugins
+vim +PlugInstall # Install all plugins
 {% endhighlight %}
 
 This set of commands will install a basic list of extensions and Vundle - simple package manager.
