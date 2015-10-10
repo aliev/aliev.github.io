@@ -18,6 +18,7 @@ cd ~
 git clone https://github.com/aliev/vim.git
 mv ~/vim ~/.vim
 echo "source ~/.vim/vimrc" > .vimrc
+vim
 {% endhighlight %}
 
 This set of commands will install a basic list of extensions by using [vim-plug](https://github.com/junegunn/vim-plug), simple package manager.
