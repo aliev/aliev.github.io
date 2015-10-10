@@ -18,10 +18,9 @@ cd ~
 git clone https://github.com/aliev/vim.git
 mv ~/vim ~/.vim
 echo "source ~/.vim/vimrc" > .vimrc
-vim +PlugInstall +qa # Install all plugins and exit
 {% endhighlight %}
 
-This set of commands will install a basic list of extensions by using vim-plug - simple package manager.
+This set of commands will install a basic list of extensions by using [vim-plug](https://github.com/junegunn/vim-plug), simple package manager.
 
 Do not forget upgrade your vim to 7.4 version
 
@@ -39,7 +38,7 @@ After restarting the editor you'll see something like this:
 
 Looks not so nice, isn't it?
 
-To get a more comfortable "Look and Feel" needs to install pached fonts that you can get from the following address: [DroidSansMonoForPowerlinePlusNerdFileTypesPlusPomicons.ttf](https://github.com/aliev/vim/blob/fonts/DroidSansMonoForPowerlinePlusNerdFileTypesPlusPomicons.ttf).
+To get a more comfortable "Look and Feel" needs to install pached fonts that you can get from the following address: [DroidSansMonoForPowerlinePlusNerdFilePlusFontAwesomePlusPomicons.ttf](https://github.com/ryanoasis/nerd-fonts/blob/master/patched-fonts/DroidSansMono/Droid%20Sans%20Mono%20for%20Powerline%20Plus%20Nerd%20File%20Types%20Plus%20Font%20Awesome%20Plus%20Pomicons.otf).
 
 after installing fonts, you should see something like this:
 
@@ -183,7 +182,7 @@ Best extension, which makes full Python IDE from your Vim! I'll not describe my 
 | ```K```                     | Show documentation                      |
 | ```:Pyimport module.path``` | Open module                             |
 
-
+# vim-dispatch and vim-python-tools
 # The last words :)
 
 This tutorial will be continuously updated. Stay tuned! Thanks!
