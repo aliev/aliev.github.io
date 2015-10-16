@@ -14,10 +14,7 @@ I have only one text editor and it is Vim. I don't represent as it is possible t
 First we need to install base vim configuration. Just use the following commands:
 
 {% highlight bash %}
-cd ~
-git clone https://github.com/aliev/vim.git
-mv ~/vim ~/.vim
-echo "source ~/.vim/vimrc" > .vimrc
+git clone https://github.com/aliev/vim.git ~/.vim && echo "source ~/.vim/vimrc" > ~/.vimrc
 vim
 {% endhighlight %}
 
