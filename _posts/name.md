@@ -3,3 +3,6 @@
 <blockquote>
 <p><strong>Note:</strong> You can use <em>Markdown</em> to format your text.</p>
 </blockquote>
+<pre><code>def name():
+	pass
+</code></pre>
