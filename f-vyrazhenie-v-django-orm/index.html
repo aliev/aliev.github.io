@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../static/pygments.css">
+    <title>F выражение в Django ORM — aliev</title>
+</head>
+<body>
+    <main>
+        <header class="site-header">
+            <h1 class="site-title"><a href="/"></a></h1>
+            <nav class="site-nav">
+                
+                
+                <a href="../"><-</a>
+                
+                
+                <a href="https://aliev.me.uk" target="_blank">Medium</a>
+                <a href="https://twitter.com/ali_aliev" target="_blank">Twitter</a>
+                <a href="http://github.com/aliev" target="_blank">Github</a>
+                <a href="http://ali.aliev.me" target="_blank">CV</a>
+            </nav>
+        </header>
+        
+  
+  <div class="blog-post">
+  
+    <h2>F выражение в Django ORM</h2>
+  
+  <p class="meta">
+    written by
+    
+      <a href="https://twitter.com/ali_aliev">Ali Aliev</a>
+    
+    on 2015-06-03
+  </p>
+  <p>Выражение F() в Django ORM позволит вам использовать поля текущей модели в ваших запросах.
+Например, вы хотите увеличить значение поля на единицу, на ум приходит следующий код:</p>
+<div class="highlight"><pre><span class="n">article</span> <span class="o">=</span> <span class="n">Article</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">article</span><span class="o">.</span><span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="n">article</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+<p>Но данный код можно реализовать более элегантным способом:</p>
+<div class="highlight"><pre><span class="n">Article</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="n">F</span><span class="p">(</span><span class="s">&#39;count&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">5</span><span class="p">)</span>
+</pre></div>
+<p>Более практичный пример, сравнивать поля текущей модели.</p>
+<div class="highlight"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="n">Article</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">number_of_likes</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="o">&lt;</span><span class="n">Article</span><span class="p">:</span> <span class="n">Article</span> <span class="nb">object</span><span class="o">&gt;</span>
+</pre></div>
+<p>Попробуем сделать сравнение</p>
+<div class="highlight"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="kn">from</span> <span class="nn">django.db.models</span> <span class="kn">import</span> <span class="n">F</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="n">Article</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">number_of_likes__gte</span><span class="o">=</span><span class="n">F</span><span class="p">(</span><span class="s">&#39;count&#39;</span><span class="p">))</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="p">[</span><span class="o">&lt;</span><span class="n">Article</span><span class="p">:</span> <span class="n">Article</span> <span class="nb">object</span><span class="o">&gt;</span><span class="p">]</span>
+</pre></div>
+<p>Посмотрим какой SQL запрос был сгенерирован</p>
+<div class="highlight"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="k">print</span> <span class="n">Article</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">number_of_likes__gte</span><span class="o">=</span><span class="n">F</span><span class="p">(</span><span class="s">&#39;count&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">query</span>
+<span class="n">SELECT</span> <span class="s">&quot;example_article&quot;</span><span class="o">.</span><span class="s">&quot;id&quot;</span><span class="p">,</span> <span class="s">&quot;example_article&quot;</span><span class="o">.</span><span class="s">&quot;content&quot;</span><span class="p">,</span> <span class="s">&quot;example_article&quot;</span><span class="o">.</span><span class="s">&quot;count&quot;</span><span class="p">,</span> <span class="s">&quot;example_article&quot;</span><span class="o">.</span><span class="s">&quot;number_of_likes&quot;</span> <span class="n">FROM</span> <span class="s">&quot;example_article&quot;</span> <span class="n">WHERE</span> <span class="s">&quot;example_article&quot;</span><span class="o">.</span><span class="s">&quot;number_of_likes&quot;</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="s">&quot;example_article&quot;</span><span class="o">.</span><span class="s">&quot;count&quot;</span><span class="p">)</span>
+</pre></div>
+<p>Если вам интересно узнать как работают F выражения изнутри советую прочитать старенькую статью <a href="http://softwaremaniacs.org/blog/2008/11/21/expressions-in-django-queries/">Ивана Сагалаева.</a></p>
+
+  </div>
+
+
+    </main>
+</body>
+</html>

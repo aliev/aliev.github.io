@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../static/pygments.css">
+    <title>Управление транзакциями в Django — aliev</title>
+</head>
+<body>
+    <main>
+        <header class="site-header">
+            <h1 class="site-title"><a href="/"></a></h1>
+            <nav class="site-nav">
+                
+                
+                <a href="../"><-</a>
+                
+                
+                <a href="https://aliev.me.uk" target="_blank">Medium</a>
+                <a href="https://twitter.com/ali_aliev" target="_blank">Twitter</a>
+                <a href="http://github.com/aliev" target="_blank">Github</a>
+                <a href="http://ali.aliev.me" target="_blank">CV</a>
+            </nav>
+        </header>
+        
+  
+  <div class="blog-post">
+  
+    <h2>Управление транзакциями в Django</h2>
+  
+  <p class="meta">
+    written by
+    
+      <a href="https://twitter.com/ali_aliev">Ali Aliev</a>
+    
+    on 2016-05-19
+  </p>
+  <p>Если вы когда либо уделяли много внимания управлениями транзакциями СУБД в Django, то вы наверняка знаете, каким запутанным может быть это занятие. В прошлом, документация предоставляла совсем мало деталей, но понимание пришло через экспериментирование.</p>
+<h1>Что такое транзакция?</h1>
+<p>Транзакция - это выполнение последовательностей SQL операторов, которые атомарны относительно восстановлению. Другими словами, SQL операторы выполняются вместе, так же как и с откатом - все операторы получают откат вместе.</p>
+<p>Например:</p>
+<div class="highlight"><pre><span class="c"># START</span>
+<span class="n">note</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s">&quot;my first note&quot;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s">&quot;Yay!&quot;</span><span class="p">)</span>
+<span class="n">note</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s">&quot;my second note&quot;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s">&quot;Whee!&quot;</span><span class="p">)</span>
+<span class="n">address1</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+<span class="n">address2</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+<span class="c"># COMMIT</span>
+</pre></div>
+<p>Таким образом, транзакция является единым процессом работы в базе данных. Данный единый процесс может быть разделен между транзакциями либо командой COMMIT.</p>
+
+  </div>
+
+
+    </main>
+</body>
+</html>

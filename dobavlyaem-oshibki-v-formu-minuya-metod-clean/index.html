@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../static/pygments.css">
+    <title>Добавляем ошибки в форму минуя метод clean — aliev</title>
+</head>
+<body>
+    <main>
+        <header class="site-header">
+            <h1 class="site-title"><a href="/"></a></h1>
+            <nav class="site-nav">
+                
+                
+                <a href="../"><-</a>
+                
+                
+                <a href="https://aliev.me.uk" target="_blank">Medium</a>
+                <a href="https://twitter.com/ali_aliev" target="_blank">Twitter</a>
+                <a href="http://github.com/aliev" target="_blank">Github</a>
+                <a href="http://ali.aliev.me" target="_blank">CV</a>
+            </nav>
+        </header>
+        
+  
+  <div class="blog-post">
+  
+    <h2>Добавляем ошибки в форму минуя метод clean</h2>
+  
+  <p class="meta">
+    written by
+    
+      <a href="https://twitter.com/ali_aliev">Ali Aliev</a>
+    
+    on 2015-06-19
+  </p>
+  <p>Иногда бывает удобно добавлять ошибки полей формы минуя метод clean. Для этого в Django &gt; 1.7 был добавлен новый метод add_error в экземпляр формы. Использовать этот метод легко, достаточно указать в качестве его параметра id поля и сообщение об ошибке, после чего вернуть form_invalid. Пример использования в FormView:</p>
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">TestFormView</span><span class="p">(</span><span class="n">FormView</span><span class="p">):</span>
+    <span class="n">form_class</span> <span class="o">=</span> <span class="n">TestForm</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s">&#39;test/form.html&#39;</span>
+
+    <span class="k">def</span> <span class="nf">form_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">form</span><span class="p">):</span>
+        <span class="n">less_than_one</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;less_than_one&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">less_than_one</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">form</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s">&#39;less_than_one&#39;</span><span class="p">,</span> <span class="n">forms</span><span class="o">.</span><span class="n">ValidationError</span><span class="p">(</span><span class="s">&#39;Can not be greater than one&#39;</span><span class="p">))</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">TestFormView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">form_invalid</span><span class="p">(</span><span class="n">form</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">TestFormView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">form_valid</span><span class="p">(</span><span class="n">form</span><span class="p">)</span>
+</pre></div>
+<p>Если по каким то причинам вы не в состоянии обновиться до Django &gt; 1.7, есть вариант воспользоваться следующим приемом:</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">django</span> <span class="kn">import</span> <span class="n">forms</span>
+<span class="kn">from</span> <span class="nn">django.forms.forms</span> <span class="kn">import</span> <span class="n">NON_FIELD_ERRORS</span>
+
+<span class="k">class</span> <span class="nc">AddErrorMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="s">&quot;Backport add_error() for django &lt;1.7&quot;</span>
+    <span class="k">def</span> <span class="nf">add_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="n">field</span> <span class="o">=</span> <span class="n">field</span> <span class="ow">or</span> <span class="n">NON_FIELD_ERRORS</span>
+        <span class="k">if</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_errors</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_errors</span><span class="p">[</span><span class="n">field</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_errors</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_class</span><span class="p">([</span><span class="n">msg</span><span class="p">])</span>
+
+<span class="k">class</span> <span class="nc">ExampleForm</span><span class="p">(</span><span class="n">AddErrorMixin</span><span class="p">,</span> <span class="n">forms</span><span class="o">.</span><span class="n">Form</span><span class="p">):</span>
+    <span class="k">pass</span>
+</pre></div>
+
+  </div>
+
+
+    </main>
+</body>
+</html>
