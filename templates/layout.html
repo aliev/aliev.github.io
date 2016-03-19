@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{{ '/static/style.css'|url }}">
+    <link rel="stylesheet" href="{{ get_pygments_stylesheet()|url }}">
+    <title>{% block title %}Welcome{% endblock %} — aliev</title>
+</head>
+<body>
+    <main>
+        <header class="site-header">
+            <h1 class="site-title"><a href="{{ site.baseurl }}/">{{ site.title }}</a></h1>
+            <nav class="site-nav">
+                {% for href, title in [['/', 'Index',],] %}
+                {% if not this.is_child_of(href) %}
+                <a href="{{ href|url }}"><-</a>
+                {% endif %}
+                {% endfor %}
+                <a href="https://aliev.me.uk" target="_blank">Medium</a>
+                <a href="https://twitter.com/ali_aliev" target="_blank">Twitter</a>
+                <a href="http://github.com/aliev" target="_blank">Github</a>
+                <a href="http://ali.aliev.me" target="_blank">CV</a>
+            </nav>
+        </header>
+        {% block body %}{% endblock %}
+    </main>
+</body>
+</html>

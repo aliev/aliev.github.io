@@ -1,0 +1,8 @@
+[project]
+name = aliev
+
+[packages]
+lektor-markdown-highlighter = 0.1
+
+[servers.production]
+target = ghpages://aliev/aliev.github.com?cname=aliev.me
