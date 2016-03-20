@@ -1,23 +1,54 @@
 .admonition {
-    padding: 20px;
-    border-radius: 4px;
-    margin: 25px 0;
-    position: relative;
-    border: 1px solid #C9F0DD;
+    margin: 15px 0;
+    background: #fff;
+    padding: 10px 15px 0;
 }
-.admonition-note {
-    background: #F1FFF7;
-    border: 1px solid #C9F0DD;
+
+.admonition:before {
+    margin: -10px -15px 10px;
+    padding: 10px 15px;
+    line-height: 1;
+    background: #ccc;
+    display: block;
+    content: "";
+    font-weight: 700;
+    font-size: 13px;
 }
-.admonition-tip {
-    background: #F1FFF7;
-    border: 1px solid #C9F0DD;
+
+.admonition.admonition-warning {
+    border: 1px solid #E0AA8F;
 }
-.admonition-info {
-    background: #F1FFF7;
-    border: 1px solid #C9F0DD;
+
+.admonition.admonition-warning:before {
+    content: "Warning";
+    background: #E0AA8F;
 }
-.admonition-warning {
-    background-color: #FFFDF1;
-    border-color: #F5F1C7;
+
+.admonition.admonition-note {
+    border: 1px solid #8FC4E0;
 }
+
+.admonition.admonition-note:before {
+    content: "Note";
+    background: #8FC4E0;
+}
+
+.admonition.admonition-info {
+    border: 1px solid #E0C18F;
+}
+
+.admonition.admonition-info:before {
+    content: "Info";
+    background: #E0C18F;
+}
+
+.admonition.admonition-tip {
+    border: 1px solid #9EB675;
+}
+
+.admonition.admonition-tip:before {
+    content: "Tip";
+    background: #9EB675;
+}
+
+
