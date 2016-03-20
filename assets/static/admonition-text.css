@@ -1,20 +1,23 @@
 .admonition {
-    /* bootstrap 3 .alert style */
-    padding: 10px;
-    margin-bottom: 14px;
-    border: 1px solid transparent;
-    border-radius: 2px;
-    background-color: #eef;
+    padding: 20px;
+    border-radius: 4px;
+    margin: 25px 0;
+    position: relative;
+    border: 1px solid #C9F0DD;
 }
 .admonition-note {
-    border-color: olive;
+    background: #F1FFF7;
+    border: 1px solid #C9F0DD;
 }
 .admonition-tip {
-    border-color: blue;
+    background: #F1FFF7;
+    border: 1px solid #C9F0DD;
 }
 .admonition-info {
-    border-color: green;
+    background: #F1FFF7;
+    border: 1px solid #C9F0DD;
 }
 .admonition-warning {
-    border-color: red;
+    background-color: #FFFDF1;
+    border-color: #F5F1C7;
 }
