@@ -1,0 +1,19 @@
+.admonition {
+    /* bootstrap 3 .alert style */
+    padding: 10px;
+    margin-bottom: 14px;
+    border: 1px solid transparent;
+    border-radius: 2px;
+}
+.admonition-note {
+    border-color: olive;
+}
+.admonition-tip {
+    border-color: blue;
+}
+.admonition-info {
+    border-color: green;
+}
+.admonition-warning {
+    border-color: red;
+}
