@@ -2,7 +2,7 @@
 {% from "macros/blog.html" import render_blog_post %}
 {% from "macros/blog.html" import render_blog_post_without_body %}
 {% from "macros/pagination.html" import render_pagination %}
-{% block title %}{{ this.title }}{% endblock %}
+{% block title %}{{ this.title }}Ali Aliev blog{% endblock %}
 {% block body %}
   {% for child in this.pagination.items %}
     {{ render_blog_post_without_body(child, from_index=true) }}
