@@ -354,8 +354,9 @@ class ApiListView(ApiFormView):
             data.append(company)
 
         return data
-
 ```
+
+Полный исходный код проекта можно посмотреть [тут](https://github.com/aliev/yelp_google_places)
 
 
 ---
