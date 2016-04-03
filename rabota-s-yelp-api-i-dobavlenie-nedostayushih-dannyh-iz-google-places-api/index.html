@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../static/font-awesome.min.css">
+    <link rel="stylesheet" href="../static/admonition-text.css">
+    <link rel="stylesheet" href="../static/pygments.css">
+    <title>Работа с Yelp API и добавление недостающих данных из Google Places API</title>
+</head>
+<body>
+    <main>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+  
+  <div class="blog-post">
+  
+    <h2>Работа с Yelp API и добавление недостающих данных из Google Places API</h2>
+  
+  <p class="meta">
+    written by
+    
+      <a href="https://twitter.com/ali_aliev">Ali Aliev</a>
+    
+    on 2016-03-27
+  </p>
+  <h1 id="">Введение</h1><p>Иногда бывает очень полезно иметь под рукой инструмент, позволяющий производить поиск по компаниям и получать о них подробную и свежую информацию.</p>
+<p>К сожалению Yelp предоставляет неполные данные о компаниях, которые он отдает через свой API. Для решения данной проблемы мы воспользуемся услугами Google Places API</p>
+<p>В данной статье я расскажу как работать с Yelp и Google Places API, которые будут дополнять данными друг друга. Создадим простую API обертку на Django и задеплоим проект на Heroku.</p>
+<h1 id="yelp-api">Пару слов о Yelp API</h1><p>Для работы с Yelp API нужно получить ключи по <a href="https://www.yelp.com/developers/manage_api_keys">адресу</a> предварительно необходимо создать аккаунт.</p>
+<p>Так же нам пригодится пакет python-yelp-v2, который можно установить через пакетный менеджер pip</p>
+<div class="highlight"><pre><span></span>pip install python-yelp-v2
+</pre></div>
+<p>Я не буду подробно разбирать весь процесс работы с Yelp API и то, что очень хорошо описано в <a href="https://www.yelp.com/developers/documentation/v2/overview">документации</a>, а только покажу несколько примеров и ньюансов, которые пригодятся в нашем простом проекте.</p>
+<p>Давайте создадим функцию, которая возвращает экземпляр объекта Yelp. На протяжении всей статьи мы будем использовать данную функцию.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">yelp</span>
+
+<span class="n">YELP_API_KEY</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;consumer_key&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;consumer_secret&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;access_token_key&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;access_token_secret&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="k">def</span> <span class="nf">get_yelp_instance</span><span class="p">(</span><span class="n">yelp_key</span><span class="p">):</span>
+    <span class="n">yelp_instance</span> <span class="o">=</span> <span class="n">yelp</span><span class="o">.</span><span class="n">Api</span><span class="p">(</span><span class="o">**</span><span class="n">yelp_key</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">yelp_instance</span>
+
+<span class="n">yelp_instance</span> <span class="o">=</span> <span class="n">get_yelp_instance</span><span class="p">(</span><span class="n">YELP_API_KEY</span><span class="p">)</span>
+</pre></div>
+<p>Я надеюсь вы уже установили пакет python-yelp-v2, пришло время найти компанию по ключевому слову. Обязательным параметром для поиска является location. Список locations можно получить по <a href="https://www.yelp.com/developers/documentation/v2/all_category_list">адресу</a></p>
+<div class="highlight"><pre><span></span><span class="n">yelp_instance</span><span class="o">.</span><span class="n">Search</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="s1">&#39;US&#39;</span><span class="p">)</span>
+</pre></div>
+<p>Параметр offset указывает на смещение. Его можно использовать для получения следующей страницы.</p>
+<p>Очень важен параметр limit, который указывает на количество компаний на смещение. Максимальное количество компаний на страницу равно 20, максимальное смещение равно 50. Если offset будет превышен вы получите сообщение об ошибки. Для расчета смещения можно умножить общий лимит на номер страницы, которую вы хотите получить. Расчет смещения начинается с нуля, по умолчанию если не указывать данный параметр он всегда равен нулю.</p>
+<div class="highlight"><pre><span></span><span class="n">limit</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="n">page</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">offset</span> <span class="o">=</span> <span class="n">page</span> <span class="o">*</span> <span class="n">limit</span>
+<span class="n">yelp_instance</span><span class="o">.</span><span class="n">Search</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="s1">&#39;US&#39;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="n">offset</span><span class="p">)</span>
+</pre></div>
+<p>Дополнительно Yelp API поддерживает параметры term для поиска по ключевому слову и category_filter, для фильтрации по категориям. Для фильтрации по категориям необходимо использовать машинное имя категории которое находится по <a href="https://www.yelp.com/developers/documentation/v2/all_category_list">адресу</a></p>
+<div class="highlight"><pre><span></span><span class="n">yelp_instance</span><span class="o">.</span><span class="n">Search</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="s1">&#39;US&#39;</span><span class="p">,</span> <span class="n">term</span><span class="o">=</span><span class="s2">&quot;google&quot;</span><span class="p">,</span> <span class="n">category_filter</span><span class="o">=</span><span class="s2">&quot;gokarts&quot;</span><span class="p">)</span>
+</pre></div>
+<p>Я думаю мы уже достаточно подробно разобрали основы работы с Yelp API. Пришло время познакомиться с Google Places API.</p>
+<h1 id="google-places-api">Пару слов о Google Places API</h1><p>Мы будем использовать Google Places API для получения более подробной информации об искомой компании. Например, отзывы пользователей и их фотографии, вебсайты компаний, и рейтинг по пятибальной шкале, часы работы.</p>
+<p>Чтобы получить API токен, для работы с Google Places достаточно зайти по адресу <a href="https://console.developers.google.com/">https://console.developers.google.com/</a> создать API токен и привязать его к вашему приложению.</p>
+<p>Для работы с Google Places API мы будем использовать пакет python-google-places, который необходимо предварительно установить через pip:</p>
+<div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">python</span><span class="o">-</span><span class="n">google</span><span class="o">-</span><span class="n">places</span>
+</pre></div>
+<p>Так же как и с Yelp API мы создадим функцию, которой будет возвращаться экземпляр класса GooglePlaces:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">googleplaces</span>
+
+<span class="n">GOOGLE_API_KEY</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+<span class="k">def</span> <span class="nf">get_google_instance</span><span class="p">(</span><span class="n">google_key</span><span class="p">):</span>
+    <span class="n">google_instance</span> <span class="o">=</span> <span class="n">googleplaces</span><span class="o">.</span><span class="n">GooglePlaces</span><span class="p">(</span><span class="n">google_key</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">google_instance</span>
+
+<span class="n">google_instance</span> <span class="o">=</span> <span class="n">get_google_instance</span><span class="p">(</span><span class="n">GOOGLE_API_KEY</span><span class="p">)</span>
+</pre></div>
+<p>Для получения более подробной информации о компании через Google Places мы будем использовать ширину и долготу компании, а так же ее название из Yelp, чтобы повысить точность поиска:</p>
+<div class="highlight"><pre><span></span><span class="n">yelp_results</span> <span class="o">=</span> <span class="n">yelp_instance</span><span class="o">.</span><span class="n">Search</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="s1">&#39;US&#39;</span><span class="p">,</span> <span class="n">term</span><span class="o">=</span><span class="s2">&quot;google&quot;</span><span class="p">,</span> <span class="n">category_filter</span><span class="o">=</span><span class="s2">&quot;gokarts&quot;</span><span class="p">)</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">business</span> <span class="ow">in</span> <span class="n">yelp_results</span><span class="o">.</span><span class="n">businesses</span><span class="p">:</span>
+    <span class="n">places</span> <span class="o">=</span> <span class="n">google_instance</span><span class="o">.</span><span class="n">text_search</span><span class="p">(</span>
+        <span class="n">business</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">lat_lng</span><span class="o">=</span><span class="p">{</span>
+            <span class="s1">&#39;lat&#39;</span><span class="p">:</span> <span class="n">business</span><span class="o">.</span><span class="n">location</span><span class="o">.</span><span class="n">coordinate</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;lng&#39;</span><span class="p">:</span> <span class="n">business</span><span class="o">.</span><span class="n">location</span><span class="o">.</span><span class="n">coordinate</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="n">company</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">place</span> <span class="ow">in</span> <span class="n">places</span><span class="o">.</span><span class="n">places</span><span class="p">:</span>
+        <span class="n">place</span><span class="o">.</span><span class="n">get_details</span><span class="p">()</span>
+        <span class="n">company</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">place</span><span class="o">.</span><span class="n">details</span><span class="p">)</span>
+
+    <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">company</span><span class="p">)</span>
+</pre></div>
+<p>Стоит так же рассказать о лимитах Google Places. На самом деле, после создания токена количество запросов равно 2000 в сутки. Но количество запросов может быть повышено до 250 000 если добавить кредитную карту в свой аккаунт.</p>
+<h1 id="django">Создаем Django проект</h1><p>Пришло время создать простой проект на Django. Мы воспользуемся заготовкой django-skeleton, чтобы сэкономить время на настройку Django проекта.</p>
+<div class="highlight"><pre><span></span>django-admin startproject yelp-api-example --template<span class="o">=</span>https://github.com/aliev/django-skeleton/archive/master.zip
+<span class="nb">cd</span> yelp-api-example
+</pre></div>
+<p>Теперь создадим виртуальное окружение и активируем его, добавим пакеты, необходимые для работы с google places и yelp api в requirements.txt:</p>
+<div class="highlight"><pre><span></span>virtualenv .env
+<span class="nb">source</span> .env/bin/activate
+<span class="nb">echo</span> <span class="s2">&quot;python-yelp-v2==0.5.7&quot;</span> &gt;&gt; requirements.txt
+<span class="nb">echo</span> <span class="s2">&quot;python-google-places==1.1.0&quot;</span> &gt;&gt; requirements.txt
+pip install -r requirements.txt
+</pre></div>
+<p>У нас должна получиться такая структура проекта</p>
+<div class="highlight"><pre><span></span>├── AUTHORS.md
+├── Procfile
+├── README.md
+├── log
+│   ├── README.md
+│   └── error.log
+├── requirements.txt
+└── src
+    ├── __init__.py
+    ├── apps
+    │   ├── __init__.py
+    │   └── core
+    │       ├── __init__.py
+    │       ├── apps.py
+    │       ├── forms.py
+    │       ├── models.py
+    │       ├── templates
+    │       │   └── index.html
+    │       ├── urls.py
+    │       ├── utils.py
+    │       └── views.py
+    ├── conf
+    │   ├── __init__.py
+    │   ├── base.py
+    │   ├── local.example.py
+    │   └── local.py
+    ├── db
+    │   ├── README.md
+    │   └── development.db
+    ├── manage.py
+    ├── static
+    │   └── js
+    │       └── app.js
+    ├── templates
+    │   └── base.html
+    ├── urls.py
+    └── wsgi.py
+</pre></div>
+<p>Наш стартовый Django проект почти полностью готов для работы. Для полной уверенности, что все работает, развернем проект на Heroku. В django-skeleton уже есть готовые настройки для Heroku, нужно просто создать приложение.</p>
+<div class="highlight"><pre><span></span>git init .
+heroku create
+git add .
+git commit -m <span class="s1">&#39;first commit&#39;</span>
+git push heroku master
+</pre></div>
+<p>Последние настройки, которые нам необходимо сделать - установить API ключи для Google Places и Yelp в виртуальное окружение Heroku. Для этого заходим в Dashboard нашего аккаунта, и выбираем приложение, которое создала команда heroku, открываем Settings и нажимаем на кнопку Reveral config vars. Устанавливаем значения для Config Vars как показано на картинке:</p>
+<p>Наше Django приложение должно знать о наших API ключах. Откроем файл src/conf/base.py и пропишем следующее:</p>
+<div class="highlight"><pre><span></span><span class="n">YELP_API_KEY</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;consumer_key&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;consumer_key&#39;</span><span class="p">),</span>
+    <span class="s1">&#39;consumer_secret&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;consumer_secret&#39;</span><span class="p">),</span>
+    <span class="s1">&#39;access_token_key&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;access_token_key&#39;</span><span class="p">),</span>
+    <span class="s1">&#39;access_token_secret&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;access_token_secret&#39;</span><span class="p">),</span>
+<span class="p">}</span>
+
+<span class="n">GOOGLE_API_KEY</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;GOOGLE_API_KEY&#39;</span><span class="p">)</span>
+</pre></div>
+<p>Хранить ключи API или пароли в проекте - очень плохая идея, поэтому пусть их местом будет виртуальное окружение сервера.</p>
+<p>Для того, чтобы проект подхватил ключи во время локального тестирования проекта создайте в домашней директории файл ~/.env.secret со следующим содержимым:</p>
+<div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">access_token_key</span> <span class="o">=</span> <span class="s1">&#39;your yelp access token&#39;</span>
+<span class="nb">export</span> <span class="nv">access_token_secret</span> <span class="o">=</span> <span class="s1">&#39;your yelp token secret&#39;</span>
+<span class="nb">export</span> <span class="nv">consumer_key</span> <span class="o">=</span> <span class="s1">&#39;your yelp consumer key&#39;</span>
+<span class="nb">export</span> <span class="nv">consumer_secret</span> <span class="o">=</span> <span class="s1">&#39;your yelp consumer secret&#39;</span>
+<span class="nb">export</span> <span class="nv">GOOGLE_API_KEY</span> <span class="o">=</span> <span class="s1">&#39;your google api key&#39;</span>
+</pre></div>
+<p>Теперь перед запуском проекта достаточно ввести команду source ~/.env.secret и ваш Django проект автоматически подтянет ключи API.</p>
+<pre><code>source ~/.env.secret
+</code></pre>
+<p>Пришло время создать форму поиска. Формы удобны тем, что в них уже встроена валидация и нам не придется писать для этого много ненужного кода. Создадим форму поиска в файле src/core/forms.py</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django</span> <span class="kn">import</span> <span class="n">forms</span>
+
+
+<span class="k">class</span> <span class="nc">ApiListForm</span><span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">Form</span><span class="p">):</span>
+    <span class="n">category_filter</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">location</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">term</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">limit</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</pre></div>
+<p>Нам понадобятся также функции, возвращающие экземпляры классов GooglePlaces и yelp.Api, описание которых мы сделали вначале статьи. Давайте перенесем их в src/core/utils.py для удобства</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">yelp</span>
+<span class="kn">import</span> <span class="nn">googleplaces</span>
+
+<span class="k">def</span> <span class="nf">get_yelp_instance</span><span class="p">(</span><span class="n">yelp_key</span><span class="p">):</span>
+    <span class="n">yelp_instance</span> <span class="o">=</span> <span class="n">yelp</span><span class="o">.</span><span class="n">Api</span><span class="p">(</span><span class="o">**</span><span class="n">yelp_key</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">yelp_instance</span>
+
+
+<span class="k">def</span> <span class="nf">get_google_instance</span><span class="p">(</span><span class="n">google_key</span><span class="p">):</span>
+    <span class="n">google_instance</span> <span class="o">=</span> <span class="n">googleplaces</span><span class="o">.</span><span class="n">GooglePlaces</span><span class="p">(</span><span class="n">google_key</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">google_instance</span>
+</pre></div>
+<p>Пришло время реализовать наше представление. Для начала создадим базовое представление, от которого мы будем наследоваться в файле src/core/views.py.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">django.views.generic</span> <span class="kn">import</span> <span class="n">View</span>
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
+
+
+<span class="k">class</span> <span class="nc">ApiFormView</span><span class="p">(</span><span class="n">View</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cleaned_data</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cleaned_data</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">form_class</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="n">status_code</span> <span class="o">=</span> <span class="mi">200</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;success&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">message</span>
+                <span class="n">data</span><span class="p">[</span><span class="s1">&#39;success&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
+                <span class="n">status_code</span> <span class="o">=</span> <span class="mi">400</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">status_code</span> <span class="o">=</span> <span class="mi">400</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">_errors</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;success&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
+
+
+        <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cls</span><span class="o">=</span><span class="n">DecimalEncoder</span><span class="p">),</span>
+                            <span class="n">status</span><span class="o">=</span><span class="n">status_code</span><span class="p">,</span>
+                            <span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;application/json&#39;</span><span class="p">)</span>
+</pre></div>
+<p>Данное представление реализует метод get, в котором происходит отрисовка формы. В случае, если валидация формы не прошла клиенту вернется ответ со статусом 400 и JSON с описанием ошибок полей формы. Если же валидация прошла успешно будет возвращен результат работы метода get_data, который мы будем реализовывать в нашем дочернем классе.</p>
+<p>Реализуем дочерний класс ApiListView, который будет возвращать результат ответа из Google Places API и Yelp API:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">django.conf</span> <span class="kn">import</span> <span class="n">settings</span>
+<span class="kn">from</span> <span class="nn">.forms</span> <span class="kn">import</span> <span class="n">ApiListForm</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">get_yelp_instance</span><span class="p">,</span> <span class="n">get_google_instance</span><span class="p">,</span> <span class="n">DecimalEncoder</span>
+
+
+<span class="k">class</span> <span class="nc">ApiListView</span><span class="p">(</span><span class="n">ApiFormView</span><span class="p">):</span>
+    <span class="n">form_class</span> <span class="o">=</span> <span class="n">ApiListForm</span>
+
+    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cleaned_data</span><span class="p">):</span>
+        <span class="n">cleaned_data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">ApiListView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">cleaned_data</span><span class="p">)</span>
+
+        <span class="n">category_filter</span> <span class="o">=</span> <span class="n">cleaned_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;category_filter&#39;</span><span class="p">)</span>
+        <span class="n">location</span> <span class="o">=</span> <span class="n">cleaned_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;location&#39;</span><span class="p">)</span>
+        <span class="n">term</span> <span class="o">=</span> <span class="n">cleaned_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;term&#39;</span><span class="p">)</span>
+        <span class="n">page</span> <span class="o">=</span> <span class="n">cleaned_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;offset&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">0</span>
+        <span class="n">limit</span> <span class="o">=</span> <span class="n">cleaned_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;limit&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">20</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">_offset_end</span> <span class="o">=</span> <span class="mi">50</span>
+        <span class="n">_page_size</span> <span class="o">=</span> <span class="n">limit</span>
+
+        <span class="n">google_instance</span> <span class="o">=</span> <span class="n">get_google_instance</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">GOOGLE_API_KEY</span><span class="p">)</span>
+        <span class="n">yelp_instance</span> <span class="o">=</span> <span class="n">get_yelp_instance</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">YELP_API_KEY</span><span class="p">)</span>
+
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="n">cleaned_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;location&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;limit&#39;</span><span class="p">:</span> <span class="n">_page_size</span><span class="p">,</span>
+            <span class="s1">&#39;offset&#39;</span><span class="p">:</span> <span class="n">_page_size</span> <span class="o">*</span> <span class="n">page</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">category_filter</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;category_filter&#39;</span><span class="p">:</span> <span class="n">category_filter</span><span class="p">})</span>
+
+        <span class="k">if</span> <span class="n">term</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;term&#39;</span><span class="p">:</span> <span class="n">term</span><span class="p">})</span>
+
+        <span class="n">yelp_response</span> <span class="o">=</span> <span class="n">yelp_instance</span><span class="o">.</span><span class="n">Search</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">business</span> <span class="ow">in</span> <span class="n">yelp_response</span><span class="o">.</span><span class="n">businesses</span><span class="p">:</span>
+            <span class="n">places</span> <span class="o">=</span> <span class="n">google_instance</span><span class="o">.</span><span class="n">text_search</span><span class="p">(</span>
+                <span class="n">business</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">lat_lng</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s1">&#39;lat&#39;</span><span class="p">:</span> <span class="n">business</span><span class="o">.</span><span class="n">location</span><span class="o">.</span><span class="n">coordinate</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">],</span>
+                    <span class="s1">&#39;lng&#39;</span><span class="p">:</span> <span class="n">business</span><span class="o">.</span><span class="n">location</span><span class="o">.</span><span class="n">coordinate</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">]</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+
+            <span class="n">company</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">place</span> <span class="ow">in</span> <span class="n">places</span><span class="o">.</span><span class="n">places</span><span class="p">:</span>
+                <span class="n">place</span><span class="o">.</span><span class="n">get_details</span><span class="p">()</span>
+                <span class="n">company</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">place</span><span class="o">.</span><span class="n">details</span><span class="p">)</span>
+
+            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">company</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">data</span>
+</pre></div>
+
+  </div>
+
+  <div class="comments">
+<div id="disqus_thread"></div>
+<script>
+  var disqus_config = function() { this.page.identifier = "/rabota-s-yelp-api-i-dobavlenie-nedostayushih-dannyh-iz-google-places-api"; };
+  (function() {
+    var d = document, s = d.createElement('script');
+    s.src = '//alialiev.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+</script>
+<noscript>
+  Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript"
+    rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+</div>
+
+    </main>
+    <a href="https://github.com/aliev"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/82b228a3648bf44fc1163ef44c62fcc60081495e/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_red_aa0000.png"></a>
+</body>
+</html>

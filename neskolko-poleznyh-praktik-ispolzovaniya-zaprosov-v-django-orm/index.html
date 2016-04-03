@@ -2,25 +2,21 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../static/font-awesome.min.css">
+    <link rel="stylesheet" href="../static/admonition-text.css">
     <link rel="stylesheet" href="../static/pygments.css">
-    <title>Несколько полезных практик использования запросов в Django ORM — aliev</title>
+    <title>Несколько полезных практик использования запросов в Django ORM</title>
 </head>
 <body>
     <main>
-        <header class="site-header">
-            <h1 class="site-title"><a href="/"></a></h1>
-            <nav class="site-nav">
-                
-                
-                <a href="../"><-</a>
-                
-                
-                <a href="https://aliev.me.uk" target="_blank">Medium</a>
-                <a href="https://twitter.com/ali_aliev" target="_blank">Twitter</a>
-                <a href="http://github.com/aliev" target="_blank">Github</a>
-                <a href="http://ali.aliev.me" target="_blank">CV</a>
-            </nav>
-        </header>
+        
+        
+        
+        
+        
+        
+        
+        
         
   
   <div class="blog-post">
@@ -36,22 +32,22 @@
   </p>
   <p><strong> select_related() </strong></p>
 <p>Метод select_related() создает запрос, который объединяет связанные объекты. Метод не выполняет дополнительные запросы при доступе к связанным объектам, что может увеличить производительность, но при этом увеличивается объем получаемых данных. Я думаю было бы целесообразно использовать select_related() вместе с методом iterator(), так мы сможем получать большие данные по кусочкам не засоряя память:</p>
-<div class="highlight"><pre><span class="n">users</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">select_related</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><span class="n">users</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">select_related</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
 
 <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">users</span><span class="o">.</span><span class="n">iterator</span><span class="p">():</span>
     <span class="o">...</span>
 </pre></div>
 <p><strong> exists() </strong></p>
 <p>Давайте рассмотрим небольшой практический пример:</p>
-<div class="highlight"><pre><span class="c"># Запрос выполняться не будет</span>
-<span class="n">users_at_city</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">city</span><span class="o">=</span><span class="s">&#39;Somecity&#39;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="c1"># Запрос выполняться не будет</span>
+<span class="n">users_at_city</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">city</span><span class="o">=</span><span class="s1">&#39;Somecity&#39;</span><span class="p">)</span>
 
-<span class="c"># Тут уже выполнится запрос</span>
+<span class="c1"># Тут уже выполнится запрос</span>
 <span class="k">if</span> <span class="n">users_at_city</span><span class="p">:</span>
     <span class="o">...</span>
 </pre></div>
 <p>Строка с оператором if выполнит запрос QuerySet, даже если вы никогда не собираетесь использовать результаты данного запроса. Для этих целей было бы целесообразно воспользоваться методом exists():</p>
-<div class="highlight"><pre><span class="n">users_at_city</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">city</span><span class="o">=</span><span class="s">&#39;Somecity&#39;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="n">users_at_city</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">city</span><span class="o">=</span><span class="s1">&#39;Somecity&#39;</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="n">users_at_city</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
     <span class="o">...</span>
@@ -63,7 +59,7 @@
 <li>Если записи существуют, получить их порциями (iterator)</li>
 </ol>
 <p>Пример:</p>
-<div class="highlight"><pre><span class="n">users</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><span class="n">users</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
 <span class="k">if</span> <span class="n">users</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
     <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">users</span><span class="o">.</span><span class="n">iterator</span><span class="p">():</span>
         <span class="o">...</span>
@@ -89,5 +85,6 @@
 </div>
 
     </main>
+    <a href="https://github.com/aliev"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/82b228a3648bf44fc1163ef44c62fcc60081495e/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_red_aa0000.png"></a>
 </body>
 </html>

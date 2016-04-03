@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../static/font-awesome.min.css">
+    <link rel="stylesheet" href="../static/admonition-text.css">
+    <link rel="stylesheet" href="../static/pygments.css">
+    <title>Работаем с defaultdict</title>
+</head>
+<body>
+    <main>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+  
+  <div class="blog-post">
+  
+    <h2>Работаем с defaultdict</h2>
+  
+  <p class="meta">
+    written by
+    
+      
+    
+    on 
+  </p>
+  <h3 id="defaultdict?">Что такое defaultdict?</h3><p><code>defaultdict</code> является частью модуля <code>collections</code>, который представляет из себя словарь, возвращающий переданное в качестве его конструктора значение (default_factory) в случае отсутствия ключа. Из этого следует, что defaultdict никогда не вернет исключение <code>IndexError</code>, за исключением случаев когда значение default_factory является пустым.</p>
+<h3 id="?">Зачем?</h3><h3 id="?">Как это работает?</h3><p>Ключевыми моментами в <code>defaultdict</code> является параметр <code>default_factory</code>, который принимает конструктор и метод <code>__missing__</code></p>
+<p>В случае, если default_factory пустой, то любое обращение к несуществующему ключу вернет нам <code>KeyError</code>.</p>
+<pre><code>&gt; c = defaultdict()
+&gt; c['key']
+...
+KeyError: 'key'
+</code></pre>
+<p><a href="http://code.activestate.com/recipes/523034-emulate-collectionsdefaultdict/">Эмуляция defaultdict</a></p>
+<h3 id="defaultdict">Интересный пример, рекурсивный defaultdict</h3><p>Посредством defaultdict можно просто реализовать древовидную структуру данных передавая в качестве конструктора функцию рекурсивно:</p>
+<pre><code>tree = lambda: defaultdict(tree)
+c = tree()
+</code></pre>
+<p>К какому бы элементу массива мы не обратились мы всегда получим значение по умолчанию. Тем самым мы сможем строить древовидные структуры:</p>
+<pre><code>users = tree()
+users['harold']['username'] = 'hrldcpr'
+users['handler']['username'] = 'matthandlersux'
+</code></pre>
+<p>В языке программирования Perl такая штука называется автовивификацией, в PHP она работает по умолчанию.</p>
+<pre><code>$arr = array();
+$arr["express"][3] = "stand and deliver";
+</code></pre>
+
+  </div>
+
+  <div class="comments">
+<div id="disqus_thread"></div>
+<script>
+  var disqus_config = function() { this.page.identifier = "/rabotaem-s-defaultdict"; };
+  (function() {
+    var d = document, s = d.createElement('script');
+    s.src = '//alialiev.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+</script>
+<noscript>
+  Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript"
+    rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+</div>
+
+    </main>
+    <a href="https://github.com/aliev"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/82b228a3648bf44fc1163ef44c62fcc60081495e/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_red_aa0000.png"></a>
+</body>
+</html>
