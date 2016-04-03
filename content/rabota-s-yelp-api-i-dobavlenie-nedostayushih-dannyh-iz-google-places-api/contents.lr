@@ -1,0 +1,366 @@
+title: Работа с Yelp API и добавление недостающих данных из Google Places API
+---
+description: 
+---
+body:
+
+# Введение
+
+Иногда бывает очень полезно иметь под рукой инструмент, позволяющий производить поиск по компаниям и получать о них подробную и свежую информацию.
+
+К сожалению Yelp предоставляет неполные данные о компаниях, которые он отдает через свой API. Для решения данной проблемы мы воспользуемся услугами Google Places API
+
+В данной статье я расскажу как работать с Yelp и Google Places API, которые будут дополнять данными друг друга. Создадим простую API обертку на Django и задеплоим проект на Heroku.
+
+# Пару слов о Yelp API
+
+Для работы с Yelp API нужно получить ключи по [адресу](https://www.yelp.com/developers/manage_api_keys) предварительно необходимо создать аккаунт.
+
+Так же нам пригодится пакет python-yelp-v2, который можно установить через пакетный менеджер pip
+
+```bash
+pip install python-yelp-v2
+```
+
+Я не буду подробно разбирать весь процесс работы с Yelp API и то, что очень хорошо описано в [документации](https://www.yelp.com/developers/documentation/v2/overview), а только покажу несколько примеров и ньюансов, которые пригодятся в нашем простом проекте.
+
+Давайте создадим функцию, которая возвращает экземпляр объекта Yelp. На протяжении всей статьи мы будем использовать данную функцию.
+
+```python
+
+import yelp
+
+YELP_API_KEY = {
+    'consumer_key': '',
+    'consumer_secret': '',
+    'access_token_key': '',
+    'access_token_secret': '',
+}
+
+def get_yelp_instance(yelp_key):
+    yelp_instance = yelp.Api(**yelp_key)
+    return yelp_instance
+
+yelp_instance = get_yelp_instance(YELP_API_KEY)
+```
+
+Я надеюсь вы уже установили пакет python-yelp-v2, пришло время найти компанию по ключевому слову. Обязательным параметром для поиска является location. Список locations можно получить по [адресу](https://www.yelp.com/developers/documentation/v2/all_category_list)
+
+```python
+yelp_instance.Search(location='US')
+```
+
+Параметр offset указывает на смещение. Его можно использовать для получения следующей страницы.
+
+Очень важен параметр limit, который указывает на количество компаний на смещение. Максимальное количество компаний на страницу равно 20, максимальное смещение равно 50. Если offset будет превышен вы получите сообщение об ошибки. Для расчета смещения можно умножить общий лимит на номер страницы, которую вы хотите получить. Расчет смещения начинается с нуля, по умолчанию если не указывать данный параметр он всегда равен нулю.
+
+```python
+limit = 20
+page = 1
+offset = page * limit
+yelp_instance.Search(location='US', limit=limit, offset=offset)
+```
+
+Дополнительно Yelp API поддерживает параметры term для поиска по ключевому слову и category_filter, для фильтрации по категориям. Для фильтрации по категориям необходимо использовать машинное имя категории которое находится по [адресу](https://www.yelp.com/developers/documentation/v2/all_category_list)
+
+```python
+yelp_instance.Search(location='US', term="google", category_filter="gokarts")
+```
+
+Я думаю мы уже достаточно подробно разобрали основы работы с Yelp API. Пришло время познакомиться с Google Places API.
+
+# Пару слов о Google Places API
+
+Мы будем использовать Google Places API для получения более подробной информации об искомой компании. Например, отзывы пользователей и их фотографии, вебсайты компаний, и рейтинг по пятибальной шкале, часы работы.
+
+Чтобы получить API токен, для работы с Google Places достаточно зайти по адресу https://console.developers.google.com/ создать API токен и привязать его к вашему приложению.
+
+Для работы с Google Places API мы будем использовать пакет python-google-places, который необходимо предварительно установить через pip:
+
+```python
+pip install python-google-places
+```
+
+Так же как и с Yelp API мы создадим функцию, которой будет возвращаться экземпляр класса GooglePlaces:
+
+```python
+
+import googleplaces
+
+GOOGLE_API_KEY = ""
+
+def get_google_instance(google_key):
+    google_instance = googleplaces.GooglePlaces(google_key)
+    return google_instance
+
+google_instance = get_google_instance(GOOGLE_API_KEY)
+```
+
+Для получения более подробной информации о компании через Google Places мы будем использовать ширину и долготу компании, а так же ее название из Yelp, чтобы повысить точность поиска:
+
+```python
+yelp_results = yelp_instance.Search(location='US', term="google", category_filter="gokarts")
+
+data = []
+
+for business in yelp_results.businesses:
+    places = google_instance.text_search(
+        business.name,
+        lat_lng={
+            'lat': business.location.coordinate['latitude'],
+            'lng': business.location.coordinate['longitude']
+        }
+    )
+
+    company = {}
+    for place in places.places:
+        place.get_details()
+        company.update(place.details)
+
+    data.append(company)
+```
+
+Стоит так же рассказать о лимитах Google Places. На самом деле, после создания токена количество запросов равно 2000 в сутки. Но количество запросов может быть повышено до 250 000 если добавить кредитную карту в свой аккаунт.
+
+# Создаем Django проект
+
+Пришло время создать простой проект на Django. Мы воспользуемся заготовкой django-skeleton, чтобы сэкономить время на настройку Django проекта.
+
+```bash
+django-admin startproject yelp-api-example --template=https://github.com/aliev/django-skeleton/archive/master.zip
+cd yelp-api-example
+```
+
+Теперь создадим виртуальное окружение и активируем его, добавим пакеты, необходимые для работы с google places и yelp api в requirements.txt:
+
+```bash
+virtualenv .env
+source .env/bin/activate
+echo "python-yelp-v2==0.5.7" >> requirements.txt
+echo "python-google-places==1.1.0" >> requirements.txt
+pip install -r requirements.txt
+```
+
+У нас должна получиться такая структура проекта
+
+```bash
+├── AUTHORS.md
+├── Procfile
+├── README.md
+├── log
+│   ├── README.md
+│   └── error.log
+├── requirements.txt
+└── src
+    ├── __init__.py
+    ├── apps
+    │   ├── __init__.py
+    │   └── core
+    │       ├── __init__.py
+    │       ├── apps.py
+    │       ├── forms.py
+    │       ├── models.py
+    │       ├── templates
+    │       │   └── index.html
+    │       ├── urls.py
+    │       ├── utils.py
+    │       └── views.py
+    ├── conf
+    │   ├── __init__.py
+    │   ├── base.py
+    │   ├── local.example.py
+    │   └── local.py
+    ├── db
+    │   ├── README.md
+    │   └── development.db
+    ├── manage.py
+    ├── static
+    │   └── js
+    │       └── app.js
+    ├── templates
+    │   └── base.html
+    ├── urls.py
+    └── wsgi.py
+```
+
+Наш стартовый Django проект почти полностью готов для работы. Для полной уверенности, что все работает, развернем проект на Heroku. В django-skeleton уже есть готовые настройки для Heroku, нужно просто создать приложение.
+
+```bash
+git init .
+heroku create
+git add .
+git commit -m 'first commit'
+git push heroku master
+```
+
+Последние настройки, которые нам необходимо сделать - установить API ключи для Google Places и Yelp в виртуальное окружение Heroku. Для этого заходим в Dashboard нашего аккаунта, и выбираем приложение, которое создала команда heroku, открываем Settings и нажимаем на кнопку Reveral config vars. Устанавливаем значения для Config Vars как показано на картинке:
+
+Наше Django приложение должно знать о наших API ключах. Откроем файл src/conf/base.py и пропишем следующее:
+
+```python
+YELP_API_KEY = {
+    'consumer_key': os.getenv('consumer_key'),
+    'consumer_secret': os.getenv('consumer_secret'),
+    'access_token_key': os.getenv('access_token_key'),
+    'access_token_secret': os.getenv('access_token_secret'),
+}
+
+GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
+```
+
+Хранить ключи API или пароли в проекте - очень плохая идея, поэтому пусть их местом будет виртуальное окружение сервера.
+
+Для того, чтобы проект подхватил ключи во время локального тестирования проекта создайте в домашней директории файл ~/.env.secret со следующим содержимым:
+
+```bash
+export access_token_key = 'your yelp access token'
+export access_token_secret = 'your yelp token secret'
+export consumer_key = 'your yelp consumer key'
+export consumer_secret = 'your yelp consumer secret'
+export GOOGLE_API_KEY = 'your google api key'
+```
+
+Теперь перед запуском проекта достаточно ввести команду source ~/.env.secret и ваш Django проект автоматически подтянет ключи API.
+
+```
+source ~/.env.secret
+```
+
+Пришло время создать форму поиска. Формы удобны тем, что в них уже встроена валидация и нам не придется писать для этого много ненужного кода. Создадим форму поиска в файле src/core/forms.py
+
+```python
+from django import forms
+
+
+class ApiListForm(forms.Form):
+    category_filter = forms.CharField(required=False)
+    location = forms.CharField(required=True, max_length=2)
+    term = forms.CharField(required=False)
+    offset = forms.IntegerField(required=False)
+    limit = forms.IntegerField(required=False)
+```
+
+Нам понадобятся также функции, возвращающие экземпляры классов GooglePlaces и yelp.Api, описание которых мы сделали вначале статьи. Давайте перенесем их в src/core/utils.py для удобства
+
+```python
+import yelp
+import googleplaces
+
+def get_yelp_instance(yelp_key):
+    yelp_instance = yelp.Api(**yelp_key)
+    return yelp_instance
+
+
+def get_google_instance(google_key):
+    google_instance = googleplaces.GooglePlaces(google_key)
+    return google_instance
+```
+
+Пришло время реализовать наше представление. Для начала создадим базовое представление, от которого мы будем наследоваться в файле src/core/views.py. 
+
+```python
+import json
+from django.views.generic import View
+from django.http import HttpResponse
+
+
+class ApiFormView(View):
+
+    def get_data(self, cleaned_data):
+        return cleaned_data
+
+    def get(self, request, *args, **kwargs):
+        data = {}
+        form = self.form_class(self.request.GET)
+        if form.is_valid():
+            status_code = 200
+            data['success'] = True
+            try:
+                data['data'] = self.get_data(form.cleaned_data)
+            except Exception as e:
+                data['errors'] = e.message
+                data['success'] = False
+                status_code = 400
+        else:
+            status_code = 400
+            data['errors'] = form._errors
+            data['success'] = False
+
+
+        return HttpResponse(json.dumps(data, cls=DecimalEncoder),
+                            status=status_code,
+                            content_type='application/json')
+```
+
+Данное представление реализует метод get, в котором происходит отрисовка формы. В случае, если валидация формы не прошла клиенту вернется ответ со статусом 400 и JSON с описанием ошибок полей формы. Если же валидация прошла успешно будет возвращен результат работы метода get_data, который мы будем реализовывать в нашем дочернем классе.
+
+Реализуем дочерний класс ApiListView, который будет возвращать результат ответа из Google Places API и Yelp API:
+
+```python
+import json
+from django.conf import settings
+from .forms import ApiListForm
+from .utils import get_yelp_instance, get_google_instance, DecimalEncoder
+
+
+class ApiListView(ApiFormView):
+    form_class = ApiListForm
+
+    def get_data(self, cleaned_data):
+        cleaned_data = super(ApiListView, self).get_data(cleaned_data)
+
+        category_filter = cleaned_data.get('category_filter')
+        location = cleaned_data.get('location')
+        term = cleaned_data.get('term')
+        page = cleaned_data.get('offset') or 0
+        limit = cleaned_data.get('limit') or 20
+
+        data = []
+
+        _offset_end = 50
+        _page_size = limit
+
+        google_instance = get_google_instance(settings.GOOGLE_API_KEY)
+        yelp_instance = get_yelp_instance(settings.YELP_API_KEY)
+
+        kwargs = {
+            'location': cleaned_data.get('location'),
+            'limit': _page_size,
+            'offset': _page_size * page
+        }
+
+        if category_filter:
+            kwargs.update({'category_filter': category_filter})
+
+        if term:
+            kwargs.update({'term': term})
+
+        yelp_response = yelp_instance.Search(**kwargs)
+
+        for business in yelp_response.businesses:
+            places = google_instance.text_search(
+                business.name,
+                lat_lng={
+                    'lat': business.location.coordinate['latitude'],
+                    'lng': business.location.coordinate['longitude']
+                }
+            )
+
+            company = {}
+            for place in places.places:
+                place.get_details()
+                company.update(place.details)
+
+            data.append(company)
+
+        return data
+
+```
+
+
+---
+author: Ali Aliev
+---
+pub_date: 2016-03-27
+---
+twitter_handle: ali_aliev

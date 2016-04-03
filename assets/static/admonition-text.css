@@ -20,7 +20,10 @@
 }
 
 .admonition.admonition-warning:before {
-    content: "Warning";
+    content: "\f06a";
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: 1.3em;
+    color: white;
     background: #E0AA8F;
 }
 
@@ -29,7 +32,10 @@
 }
 
 .admonition.admonition-note:before {
-    content: "Note";
+    content: "\f05a";
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: 1.3em;
+    color: white;
     background: #8FC4E0;
 }
 
@@ -38,7 +44,10 @@
 }
 
 .admonition.admonition-info:before {
-    content: "Info";
+    content: "\f05a";
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: 1.3em;
+    color: white;
     background: #E0C18F;
 }
 
@@ -47,7 +56,10 @@
 }
 
 .admonition.admonition-tip:before {
-    content: "Tip";
+    content: "\f05a";
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: 1.3em;
+    color: white;
     background: #9EB675;
 }
 
