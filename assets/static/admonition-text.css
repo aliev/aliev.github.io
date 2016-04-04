@@ -20,7 +20,7 @@
 }
 
 .admonition.admonition-warning:before {
-    content: "\f06a";
+    content: "\f06a  Warning";
     font: normal normal normal 14px/1 FontAwesome;
     font-size: 1.3em;
     color: white;
@@ -32,7 +32,7 @@
 }
 
 .admonition.admonition-note:before {
-    content: "\f05a";
+    content: "\f05a  Note";
     font: normal normal normal 14px/1 FontAwesome;
     font-size: 1.3em;
     color: white;
@@ -44,7 +44,7 @@
 }
 
 .admonition.admonition-info:before {
-    content: "\f05a";
+    content: "\f05a  Info";
     font: normal normal normal 14px/1 FontAwesome;
     font-size: 1.3em;
     color: white;
@@ -56,7 +56,7 @@
 }
 
 .admonition.admonition-tip:before {
-    content: "\f05a";
+    content: "\f05a  Tip";
     font: normal normal normal 14px/1 FontAwesome;
     font-size: 1.3em;
     color: white;
