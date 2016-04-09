@@ -3,5 +3,4 @@
 {% block title %}{{ this.title }}{{ super() }}{% endblock %}
 {% block body %}
   {{ render_blog_post(this) }}
-  <div class="comments">{{ render_disqus_comments() }}</div>
 {% endblock %}

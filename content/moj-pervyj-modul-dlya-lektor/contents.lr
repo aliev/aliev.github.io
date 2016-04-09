@@ -1,0 +1,18 @@
+title: Мой первый модуль для lektor
+---
+author: Ali Aliev
+---
+body:
+
+Сегодня решил написать свой первый модуль для [CMS Lektor](https://github.com/lektor/lektor). Захотелось сделать списки как в github, списки в которых чекбоксы вместо ужасных [ ] и [x]. Вот пример того, как это работает:
+
+- [x] Отмеченный item
+- [ ] Неотмеченный item
+
+Исходный код модуля настолько прост, что даже поместился бы в данную статью. Но я все равно кину ссылку на github: [https://github.com/aliev/lektor-markdown-tasks](https://github.com/aliev/lektor-markdown-tasks)
+
+Кстати, исходный код данного блога [открыт](https://github.com/aliev/aliev.github.io/tree/lektor) в том числе.
+---
+pub_date: 2016-04-04
+---
+twitter_handle: ali_aliev
