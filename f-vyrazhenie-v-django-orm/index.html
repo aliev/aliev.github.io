@@ -22,14 +22,7 @@
     [2015-06-03]
   </p>
   
-  <h1>Table Of Contents</h1>
-  <ul class="toc">
-      
-      <li><a href="#hello">Hello</a>
-      
-  </ul>
-  
-  <h2 id="hello">Hello</h2><p>Выражение F() в Django ORM позволит вам использовать поля текущей модели в ваших запросах.
+  <p>Выражение F() в Django ORM позволит вам использовать поля текущей модели в ваших запросах.
 Например, вы хотите увеличить значение поля на единицу, на ум приходит следующий код:</p>
 <div class="highlight"><pre><span></span><span class="n">article</span> <span class="o">=</span> <span class="n">Article</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">article</span><span class="o">.</span><span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
