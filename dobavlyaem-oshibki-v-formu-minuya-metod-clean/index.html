@@ -10,26 +10,18 @@
 <body>
     <main>
         
-        
-        
-        
-        
-        
-        
-        
-        
   
   <div class="blog-post">
   
-    <h2>Добавляем ошибки в форму минуя метод clean</h2>
+    <h1>Добавляем ошибки в форму минуя метод clean</h1>
   
   <p class="meta">
-    written by
     
       <a href="https://twitter.com/ali_aliev">Ali Aliev</a>
     
-    on 2015-06-19
+    [2015-06-19]
   </p>
+  
   <p>Иногда бывает удобно добавлять ошибки полей формы минуя метод clean. Для этого в Django &gt; 1.7 был добавлен новый метод add_error в экземпляр формы. Использовать этот метод легко, достаточно указать в качестве его параметра id поля и сообщение об ошибке, после чего вернуть form_invalid. Пример использования в FormView:</p>
 <div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">TestFormView</span><span class="p">(</span><span class="n">FormView</span><span class="p">):</span>
     <span class="n">form_class</span> <span class="o">=</span> <span class="n">TestForm</span>
@@ -61,22 +53,6 @@
 
   </div>
 
-  <div class="comments">
-<div id="disqus_thread"></div>
-<script>
-  var disqus_config = function() { this.page.identifier = "/dobavlyaem-oshibki-v-formu-minuya-metod-clean"; };
-  (function() {
-    var d = document, s = d.createElement('script');
-    s.src = '//alialiev.disqus.com/embed.js';
-    s.setAttribute('data-timestamp', +new Date());
-    (d.head || d.body).appendChild(s);
-  })();
-</script>
-<noscript>
-  Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript"
-    rel="nofollow">comments powered by Disqus.</a>
-</noscript>
-</div>
 
     </main>
     <a href="https://github.com/aliev"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/82b228a3648bf44fc1163ef44c62fcc60081495e/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_red_aa0000.png"></a>

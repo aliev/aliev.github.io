@@ -10,26 +10,31 @@
 <body>
     <main>
         
-        
-        
-        
-        
-        
-        
-        
-        
   
   <div class="blog-post">
   
-    <h2>Работа с Yelp API и добавление недостающих данных из Google Places API</h2>
+    <h1>Работа с Yelp API и добавление недостающих данных из Google Places API</h1>
   
   <p class="meta">
-    written by
     
       <a href="https://twitter.com/ali_aliev">Ali Aliev</a>
     
-    on 2016-03-27
+    [2016-03-27]
   </p>
+  
+  <h1>Table Of Contents</h1>
+  <ul class="toc">
+      
+      <li><a href="#">Введение</a>
+      
+      <li><a href="#yelp-api">Пару слов о Yelp API</a>
+      
+      <li><a href="#google-places-api">Пару слов о Google Places API</a>
+      
+      <li><a href="#django">Создаем Django проект</a>
+      
+  </ul>
+  
   <h1 id="">Введение</h1><p>Иногда бывает очень полезно иметь под рукой инструмент, позволяющий производить поиск по компаниям и получать о них подробную и свежую информацию.</p>
 <p>К сожалению Yelp предоставляет неполные данные о компаниях, которые он отдает через свой API. Для решения данной проблемы мы воспользуемся услугами Google Places API</p>
 <p>В данной статье я расскажу как работать с Yelp и Google Places API, которые будут дополнять данными друг друга. Создадим простую API обертку на Django и задеплоим проект на Heroku.</p>
@@ -306,22 +311,6 @@ git push heroku master
 
   </div>
 
-  <div class="comments">
-<div id="disqus_thread"></div>
-<script>
-  var disqus_config = function() { this.page.identifier = "/rabota-s-yelp-api-i-dobavlenie-nedostayushih-dannyh-iz-google-places-api"; };
-  (function() {
-    var d = document, s = d.createElement('script');
-    s.src = '//alialiev.disqus.com/embed.js';
-    s.setAttribute('data-timestamp', +new Date());
-    (d.head || d.body).appendChild(s);
-  })();
-</script>
-<noscript>
-  Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript"
-    rel="nofollow">comments powered by Disqus.</a>
-</noscript>
-</div>
 
     </main>
     <a href="https://github.com/aliev"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/82b228a3648bf44fc1163ef44c62fcc60081495e/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_red_aa0000.png"></a>
