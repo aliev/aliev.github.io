@@ -22,15 +22,24 @@
     [2015-06-21]
   </p>
   
-  <p><strong> select_related() </strong></p>
-<p>Метод select_related() создает запрос, который объединяет связанные объекты. Метод не выполняет дополнительные запросы при доступе к связанным объектам, что может увеличить производительность, но при этом увеличивается объем получаемых данных. Я думаю было бы целесообразно использовать select_related() вместе с методом iterator(), так мы сможем получать большие данные по кусочкам не засоряя память:</p>
+  <h1>Table Of Contents</h1>
+  <ul class="toc">
+      
+      <li><a href="#select_related">select_related()</a>
+      
+      <li><a href="#exists">exists()</a>
+      
+      <li><a href="#exists-iterator">Комбинирование методов exists() и iterator()</a>
+      
+  </ul>
+  
+  <h1 id="select_related">select_related()</h1><p>Метод select_related() создает запрос, который объединяет связанные объекты. Метод не выполняет дополнительные запросы при доступе к связанным объектам, что может увеличить производительность, но при этом увеличивается объем получаемых данных. Я думаю было бы целесообразно использовать select_related() вместе с методом iterator(), так мы сможем получать большие данные по кусочкам не засоряя память:</p>
 <div class="highlight"><pre><span></span><span class="n">users</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">select_related</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
 
 <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">users</span><span class="o">.</span><span class="n">iterator</span><span class="p">():</span>
     <span class="o">...</span>
 </pre></div>
-<p><strong> exists() </strong></p>
-<p>Давайте рассмотрим небольшой практический пример:</p>
+<h1 id="exists">exists()</h1><p>Давайте рассмотрим небольшой практический пример:</p>
 <div class="highlight"><pre><span></span><span class="c1"># Запрос выполняться не будет</span>
 <span class="n">users_at_city</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">city</span><span class="o">=</span><span class="s1">&#39;Somecity&#39;</span><span class="p">)</span>
 
@@ -44,8 +53,7 @@
 <span class="k">if</span> <span class="n">users_at_city</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
     <span class="o">...</span>
 </pre></div>
-<p><strong> Комбинирование методов exists() и iterator() </strong></p>
-<p>Комбинирование двух этих методов позволит нам:</p>
+<h1 id="exists-iterator">Комбинирование методов exists() и iterator()</h1><p>Комбинирование двух этих методов позволит нам:</p>
 <ol>
 <p>Проверить существуют ли записи в таблице без получения этих данных (exists)</p>
 <p>Если записи существуют, получить их порциями (iterator)</p>
