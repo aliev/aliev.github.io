@@ -1,0 +1,165 @@
+title: Docker с человеческим лицом в OS X
+---
+body:
+
+Признаюсь, что использовать Docker я стал совсем недавно. Было это связано с тем, что я не большой любитель VirtualBox, а без него в OS X Docker никак не запустить (а если быть точнее почти никак ;))
+
+Совсем недавно я услышал о Docker Beta, который не требует для своей работы VirtualBox. Но запускать виртуальную машину все же придется, правда не такую громоздкую. Заинтересовавшись я сразу же подал заявку на [early access](https://beta.docker.com/), но ждать надоело.
+
+Тут я прочитал [пост](https://blog.docker.com/2016/03/docker-for-mac-windows-beta/) в официальном блоге о новой бете, которая использует гипервизор xhyve, для запуска контейнеров в OS X. Я сразу пошел гуглить. Как оказалось проект этот уже давно лежит на GitHub, и является форком bhyve (FreeBSD гипервизор)
+
+И так, прежде чем начать работу с Docker нам понадобится гипервизор xhyve и самый миниатюрный дистрибутив Linux. Как оказалось, дистрибутивов уже готовых для запуска в xhyve вместе с файлами конфигурации и скриптами навалом. Но я остановился на [docker-root-xhyve](https://github.com/ailispaw/docker-root-xhyve). Он занимает очень мало места на жестком диске и уже имеет все необходимое, очень легко и просто запускается.
+
+Для начала работы нам необходимо установить сам docker и xhyve. Делается это очень просто:
+
+```bash
+brew install docker
+brew install xhyve
+```
+
+После того, как оба пакета установились заберем репозиторий со скриптами для запуска дистрибутива в гипервизоре:
+
+```bash
+git clone https://github.com/ailispaw/docker-root-xhyve.git
+cd docker-root-xhyve
+```
+
+Теперь, все что необходимо сделать - запустить make init. Скрипт закачает все необходимые зависимости (включая дистрибутив Linux [DockerRoot](https://github.com/ailispaw/docker-root)), а так же настроит и установит image файловой системы. Для запуска гипервизора запускаем скрипт от имени суперпользователя:
+
+```bash
+sudo ./xhyverun.sh
+```
+
+После запуска можно сразу заметить знакомое приглашение о входе в систему
+
+```bash
+➜  docker-root-xhyve git:(master) sudo ./xhyverun.sh
+Password:
+"/Users/aliev" -network 192.168.64.0 -mask 255.255.255.0 -alldirs -mapall=501:20
+Stopping the nfsd service (use 'disable' to make permanent)
+Starting the nfsd service
+Starting DockerRoot VM
+rdmsr to register 0x34 on vcpu 0
+
+Welcome to DockerRoot docker-root /dev/ttyS0
+docker-root login:
+```
+
+Хочу заметить что у меня запускается все это дело в течении нескольких секунд (что очень быстро я считаю).
+
+Настройка виртуальной машины завершена, теперь хорошо бы обновить docker server на гостевой OC. Для этого проходим этап авторизации посредством ввода логина и пароля docker, вводим sudo su для получения прав суперпользователя и запускаем обновление докера следующей командой:
+
+```bash
+[root@docker-root docker]# /etc/init.d/docker restart latest
+docker[328]: Loading /var/lib/docker-root/profile
+docker[328]: Stopping Docker daemon
+docker[328]: Setting ulimit 1048576
+docker[328]: DOCKER_RAMDISK=
+docker[328]: Docker version 1.11.0, build 4dc5990
+docker[328]: Starting Docker daemon -D -s overlay -g "/var/lib/docker" -H unix:// -H tcp://0.0.0.0:2375 --userland-proxy=false
+[root@docker-root docker]#
+```
+
+Скрипт обновил и перезапустил наш docker server. Мы полностью завершили настройку гостевой OC для хранения и запуска наших контейнеров, теперь пришло время немного настроить клиент docker. Мы уже его установили через brew.
+
+Отроем наш .bashrc или .zshrc и добавим следующие строки
+
+```bash
+export DOCKER_HOST="tcp://192.168.64.14:2375"
+```
+
+IP адрес необходимо заметить на ip адрес гостевой OC, который можно получить запустив команду ifconfig:
+
+```bash
+[root@docker-root docker]# ifconfig
+docker0   Link encap:Ethernet  HWaddr 02:42:7F:53:DC:B8
+          inet addr:172.17.0.1  Bcast:0.0.0.0  Mask:255.255.0.0
+          UP BROADCAST MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+
+eth0      Link encap:Ethernet  HWaddr 32:70:CB:56:CF:32
+          inet addr:192.168.64.14  Bcast:192.168.64.255  Mask:255.255.255.0
+          inet6 addr: fe80::3070:cbff:fe56:cf32/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:93 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:75 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:36874 (36.0 KiB)  TX bytes:7535 (7.3 KiB)
+
+lo        Link encap:Local Loopback
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+
+[root@docker-root docker]#
+```
+
+Перезагружаем сессию нашего терминала и пробуем запустить наш клиент докера.
+
+Посмотрим список images
+
+```bash
+➜  ~ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+➜  ~
+```
+
+Скачаем alpine linux (минимальный дистрибутив, который весит около 5 мегабайт)
+
+```bash
+➜  ~ docker pull alpine
+Using default tag: latest
+latest: Pulling from library/alpine
+420890c9e918: Pull complete
+Digest: sha256:9cacb71397b640eca97488cf08582ae4e4068513101088e9f96c9814bfda95e0
+Status: Downloaded newer image for alpine:latest
+➜  ~ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+alpine              latest              d7a513a663c1        13 days ago         4.794 MB
+➜  ~
+```
+
+Запустим командную оболочку
+
+```bash
+➜  ~ docker run -it alpine sh
+/ # ls -la
+total 56
+drwxr-xr-x    1 root     root          4096 Apr 15 20:46 .
+drwxr-xr-x    1 root     root          4096 Apr 15 20:46 ..
+-rwxr-xr-x    1 root     root             0 Apr 15 20:46 .dockerenv
+drwxr-xr-x    2 root     root          4096 Apr  1 18:56 bin
+drwxr-xr-x    5 root     root           360 Apr 15 20:46 dev
+drwxr-xr-x    1 root     root          4096 Apr 15 20:46 etc
+drwxr-xr-x    2 root     root          4096 Apr  1 18:56 home
+drwxr-xr-x    5 root     root          4096 Apr  1 18:56 lib
+lrwxrwxrwx    1 root     root            12 Apr  1 18:56 linuxrc -> /bin/busybox
+drwxr-xr-x    5 root     root          4096 Apr  1 18:56 media
+drwxr-xr-x    2 root     root          4096 Apr  1 18:56 mnt
+dr-xr-xr-x   76 root     root             0 Apr 15 20:46 proc
+drwx------    1 root     root          4096 Apr 15 20:46 root
+drwxr-xr-x    2 root     root          4096 Apr  1 18:56 run
+drwxr-xr-x    2 root     root          4096 Apr  1 18:56 sbin
+dr-xr-xr-x   13 root     root             0 Apr 15 20:46 sys
+drwxrwxrwt    2 root     root          4096 Apr  1 18:56 tmp
+drwxr-xr-x    7 root     root          4096 Apr  1 18:56 usr
+drwxr-xr-x   10 root     root          4096 Apr  1 18:56 var
+/ #
+```
+
+Круто, все работает :)
+
+Кстати, чтобы отключить виртуальную машину достаточно ввести команду halt от имени суперпользователя.
+---
+author: Ali Aliev
+---
+pub_date: 2016-04-16
+---
+twitter_handle: ali_aliev
