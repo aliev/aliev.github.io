@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../static/font-awesome.min.css">
+    <link rel="stylesheet" href="../static/admonition-text.css">
+    <link rel="stylesheet" href="../static/pygments.css">
+    <title>Docker с человеческим лицом в OS X</title>
+</head>
+<body>
+    <main>
+        
+  
+  <div class="blog-post">
+  
+    <h1>Docker с человеческим лицом в OS X</h1>
+  
+  <p class="meta">
+    
+      <a href="https://twitter.com/ali_aliev">Ali Aliev</a>
+    
+    [2016-04-16]
+  </p>
+  
+  <p>Признаюсь, что использовать Docker я стал совсем недавно. Было это связано с тем, что я не большой любитель VirtualBox, а без него в OS X Docker никак не запустить (а если быть точнее почти никак ;))</p>
+<p>Совсем недавно я услышал о Docker Beta, который не требует для своей работы VirtualBox. Но запускать виртуальную машину все же придется, правда не такую громоздкую. Заинтересовавшись я сразу же подал заявку на <a href="https://beta.docker.com/">early access</a>, но ждать надоело.</p>
+<p>Тут я прочитал <a href="https://blog.docker.com/2016/03/docker-for-mac-windows-beta/">пост</a> в официальном блоге о новой бете, которая использует гипирвизор xhyve, для запуска контейнеров в OS X. Я сразу пошел гуглить. Как оказалось проект этот уже давно лежит на GitHub, и является форком bhyve (FreeBSD гипервизор)</p>
+<p>И так, прежде чем начать работу с Docker нам понадобится гипервизор xhyve и самый миниатюрный дистрибутив Linux. Как оказалось, дистрибутивов уже готовых для запуска в xhyve вместе с файлами конфигурации и скриптами навалом. Но я остановился на <a href="https://github.com/ailispaw/docker-root-xhyve">docker-root-xhyve</a>. Он занимает очень мало места на жестком диске и уже имеет все необходимое, очень легко и просто запускается.</p>
+<p>Для начала работы нам необходимо установить сам docker и xhyve. Делается это очень просто:</p>
+<div class="highlight"><pre><span></span>brew install docker
+brew install xhyve
+</pre></div>
+<p>После того, как оба пакета установились заберем репозиторий со скриптами для запуска дистрибутива в гипервизоре:</p>
+<div class="highlight"><pre><span></span>git clone https://github.com/ailispaw/docker-root-xhyve.git
+<span class="nb">cd</span> docker-root-xhyve
+</pre></div>
+<p>Теперь, все что необходимо сделать - запустить make init. Скрипт закачает все необходимые зависимости (включая дистрибутив Linux <a href="https://github.com/ailispaw/docker-root">DockerRoot</a>), а так же настроит и установит image файловой системы. Для запуска гипервизора запускаем скрипт от имени суперпользователя:</p>
+<div class="highlight"><pre><span></span>sudo ./xhyverun.sh
+</pre></div>
+<p>После запуска можно сразу заметить знакомое приглашение о входе в систему</p>
+<div class="highlight"><pre><span></span>➜  docker-root-xhyve git:<span class="o">(</span>master<span class="o">)</span> sudo ./xhyverun.sh
+Password:
+<span class="s2">&quot;/Users/aliev&quot;</span> -network 192.168.64.0 -mask 255.255.255.0 -alldirs -mapall<span class="o">=</span>501:20
+Stopping the nfsd service <span class="o">(</span>use <span class="s1">&#39;disable&#39;</span> to make permanent<span class="o">)</span>
+Starting the nfsd service
+Starting DockerRoot VM
+rdmsr to register 0x34 on vcpu 0
+
+Welcome to DockerRoot docker-root /dev/ttyS0
+docker-root login:
+</pre></div>
+<p>Хочу заметить что у меня запускается все это дело в течении нескольких секунд (что очень быстро я считаю).</p>
+<p>Настройка виртуальной машины завершена, теперь хорошо бы обновить docker server на гостевой OC. Для этого проходим этап авторизации посредством ввода логина и пароля docker, вводим sudo su для получения прав суперпользователя и запускаем обновление докера следующей командой:</p>
+<div class="highlight"><pre><span></span><span class="o">[</span>root@docker-root docker<span class="o">]</span><span class="c1"># /etc/init.d/docker restart latest</span>
+docker<span class="o">[</span>328<span class="o">]</span>: Loading /var/lib/docker-root/profile
+docker<span class="o">[</span>328<span class="o">]</span>: Stopping Docker daemon
+docker<span class="o">[</span>328<span class="o">]</span>: Setting <span class="nb">ulimit</span> 1048576
+docker<span class="o">[</span>328<span class="o">]</span>: <span class="nv">DOCKER_RAMDISK</span><span class="o">=</span>
+docker<span class="o">[</span>328<span class="o">]</span>: Docker version 1.11.0, build 4dc5990
+docker<span class="o">[</span>328<span class="o">]</span>: Starting Docker daemon -D -s overlay -g <span class="s2">&quot;/var/lib/docker&quot;</span> -H unix:// -H tcp://0.0.0.0:2375 --userland-proxy<span class="o">=</span><span class="nb">false</span>
+<span class="o">[</span>root@docker-root docker<span class="o">]</span><span class="c1">#</span>
+</pre></div>
+<p>Скрипт обновил и перезапустил наш docker server. Мы полностью завершили настройку гостевой OC для хранения и запуска наших контейнеров, теперь пришло время немного настроить клиент docker. Мы уже его установили через brew.</p>
+<p>Отроем наш .bashrc или .zshrc и добавим следующие строки</p>
+<div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">DOCKER_HOST</span><span class="o">=</span><span class="s2">&quot;tcp://192.168.64.14:2375&quot;</span>
+</pre></div>
+<p>IP адрес необходимо заметить на ip адрес гостевой OC, который можно получить запустив команду ifconfig:</p>
+<div class="highlight"><pre><span></span><span class="o">[</span>root@docker-root docker<span class="o">]</span><span class="c1"># ifconfig</span>
+docker0   Link encap:Ethernet  HWaddr 02:42:7F:53:DC:B8
+          inet addr:172.17.0.1  Bcast:0.0.0.0  Mask:255.255.0.0
+          UP BROADCAST MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:0 <span class="o">(</span>0.0 B<span class="o">)</span>  TX bytes:0 <span class="o">(</span>0.0 B<span class="o">)</span>
+
+eth0      Link encap:Ethernet  HWaddr 32:70:CB:56:CF:32
+          inet addr:192.168.64.14  Bcast:192.168.64.255  Mask:255.255.255.0
+          inet6 addr: fe80::3070:cbff:fe56:cf32/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:93 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:75 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:36874 <span class="o">(</span>36.0 KiB<span class="o">)</span>  TX bytes:7535 <span class="o">(</span>7.3 KiB<span class="o">)</span>
+
+lo        Link encap:Local Loopback
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1
+          RX bytes:0 <span class="o">(</span>0.0 B<span class="o">)</span>  TX bytes:0 <span class="o">(</span>0.0 B<span class="o">)</span>
+
+<span class="o">[</span>root@docker-root docker<span class="o">]</span><span class="c1">#</span>
+</pre></div>
+<p>Перезагружаем сессию нашего терминала и пробуем запустить наш клиент докера.</p>
+<p>Посмотрим список images</p>
+<div class="highlight"><pre><span></span>➜  ~ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+➜  ~
+</pre></div>
+<p>Скачаем alpine linux (минимальный дистрибутив, который весит около 5 мегабайт)</p>
+<div class="highlight"><pre><span></span>➜  ~ docker pull alpine
+Using default tag: latest
+latest: Pulling from library/alpine
+420890c9e918: Pull <span class="nb">complete</span>
+Digest: sha256:9cacb71397b640eca97488cf08582ae4e4068513101088e9f96c9814bfda95e0
+Status: Downloaded newer image <span class="k">for</span> alpine:latest
+➜  ~ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+alpine              latest              d7a513a663c1        <span class="m">13</span> days ago         4.794 MB
+➜  ~
+</pre></div>
+<p>Запустим командную оболочку</p>
+<div class="highlight"><pre><span></span>➜  ~ docker run -it alpine sh
+/ <span class="c1"># ls -la</span>
+total 56
+drwxr-xr-x    <span class="m">1</span> root     root          <span class="m">4096</span> Apr <span class="m">15</span> 20:46 .
+drwxr-xr-x    <span class="m">1</span> root     root          <span class="m">4096</span> Apr <span class="m">15</span> 20:46 ..
+-rwxr-xr-x    <span class="m">1</span> root     root             <span class="m">0</span> Apr <span class="m">15</span> 20:46 .dockerenv
+drwxr-xr-x    <span class="m">2</span> root     root          <span class="m">4096</span> Apr  <span class="m">1</span> 18:56 bin
+drwxr-xr-x    <span class="m">5</span> root     root           <span class="m">360</span> Apr <span class="m">15</span> 20:46 dev
+drwxr-xr-x    <span class="m">1</span> root     root          <span class="m">4096</span> Apr <span class="m">15</span> 20:46 etc
+drwxr-xr-x    <span class="m">2</span> root     root          <span class="m">4096</span> Apr  <span class="m">1</span> 18:56 home
+drwxr-xr-x    <span class="m">5</span> root     root          <span class="m">4096</span> Apr  <span class="m">1</span> 18:56 lib
+lrwxrwxrwx    <span class="m">1</span> root     root            <span class="m">12</span> Apr  <span class="m">1</span> 18:56 linuxrc -&gt; /bin/busybox
+drwxr-xr-x    <span class="m">5</span> root     root          <span class="m">4096</span> Apr  <span class="m">1</span> 18:56 media
+drwxr-xr-x    <span class="m">2</span> root     root          <span class="m">4096</span> Apr  <span class="m">1</span> 18:56 mnt
+dr-xr-xr-x   <span class="m">76</span> root     root             <span class="m">0</span> Apr <span class="m">15</span> 20:46 proc
+drwx------    <span class="m">1</span> root     root          <span class="m">4096</span> Apr <span class="m">15</span> 20:46 root
+drwxr-xr-x    <span class="m">2</span> root     root          <span class="m">4096</span> Apr  <span class="m">1</span> 18:56 run
+drwxr-xr-x    <span class="m">2</span> root     root          <span class="m">4096</span> Apr  <span class="m">1</span> 18:56 sbin
+dr-xr-xr-x   <span class="m">13</span> root     root             <span class="m">0</span> Apr <span class="m">15</span> 20:46 sys
+drwxrwxrwt    <span class="m">2</span> root     root          <span class="m">4096</span> Apr  <span class="m">1</span> 18:56 tmp
+drwxr-xr-x    <span class="m">7</span> root     root          <span class="m">4096</span> Apr  <span class="m">1</span> 18:56 usr
+drwxr-xr-x   <span class="m">10</span> root     root          <span class="m">4096</span> Apr  <span class="m">1</span> 18:56 var
+/ <span class="c1">#</span>
+</pre></div>
+<p>Круто, все работает :)</p>
+<p>Кстати, чтобы отключить виртуальную машину достаточно ввести команду halt от имени суперпользователя.</p>
+
+  </div>
+
+
+    </main>
+    <a href="https://github.com/aliev"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/82b228a3648bf44fc1163ef44c62fcc60081495e/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_red_aa0000.png"></a>
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-42591955-1', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+</body>
+</html>
