@@ -22,9 +22,22 @@
     [2016-04-17]
   </p>
   
-  <p>Как оказалось существует более простой и удобный способ установки Docker в OS X. Маленькая утилита под названием <a href="https://github.com/nlf/dlite">Dlite</a>. В <a href="/docker-s-chelovecheskim-licom-v-mac-os">предыдущем</a> посте я писал о том, как установить и настроить Docker под OS X без использования VirtualBox, что сэкономит достаточно места на жестком диске и памяти.</p>
-<p><a href="https://github.com/nlf/dlite">Dlite</a> это маленькая утилита написанная на языке Go и использующая libxhyve для управления гипервизиром xhyve, о котором я так же писал в предыдущем <a href="/docker-s-chelovecheskim-licom-v-mac-os/">посте</a>. Она установит и настроит все необходимое для работы с докером. Все что необходимо сделать - это скачать бинарник dlite по ссылке <a href="https://github.com/nlf/dlite/releases">https://github.com/nlf/dlite/releases</a> и кинуть куда нибудь в /usr/local/bin/, а затем запустить sudo dlite install и dlite start. Виртуальная машина будет автоматически активироваться после перезагрузки системы, что согласитесь очень удобно.</p>
-<p>Для работы с контейнерами докера вам будет доступен хост "local.docker", после установки. Так же можно подключиться к данному хосту по ssh:</p>
+  <h1>Table Of Contents</h1>
+  <ul class="toc">
+      
+      <li><a href="#">Введение</a>
+      
+      <li><a href="#">Установка</a>
+      
+      <li><a href="#">Работа с удаленными директориями</a>
+      
+      <li><a href="#">Немного полезной информации</a>
+      
+  </ul>
+  
+  <h1 id="">Введение</h1><p>Как оказалось существует более простой и удобный способ установки Docker в OS X. Маленькая утилита под названием <a href="https://github.com/nlf/dlite">Dlite</a>. В <a href="/docker-s-chelovecheskim-licom-v-mac-os">предыдущем</a> посте я писал о том, как установить и настроить Docker под OS X без использования VirtualBox, что сэкономит достаточно места на жестком диске и памяти.</p>
+<h1 id="">Установка</h1><p><a href="https://github.com/nlf/dlite">Dlite</a> это маленькая утилита написанная на языке Go и использующая libxhyve для управления гипервизиром xhyve, о котором я так же писал в предыдущем <a href="/docker-s-chelovecheskim-licom-v-mac-os/">посте</a>. Она установит и настроит все необходимое для работы с докером. Все что необходимо сделать - это скачать бинарник dlite по ссылке <a href="https://github.com/nlf/dlite/releases">https://github.com/nlf/dlite/releases</a> и кинуть куда нибудь в /usr/local/bin/, а затем запустить <code>sudo dlite install</code> и <code>dlite start</code>. Виртуальная машина будет автоматически активироваться после перезагрузки системы, что согласитесь очень удобно.</p>
+<p>Для работы с контейнерами докера вам будет доступен хост <code>local.docker</code>, после установки. Так же можно подключиться к данному хосту по ssh:</p>
 <div class="highlight"><pre><span></span>➜  ~ ssh docker@local.docker
 DhyveOS version 2.2.0
 Docker version 1.10.0, build 590d5108
@@ -63,6 +76,31 @@ ID: BIOA:AMNG:RV6H:NWDY:XLTG:GNCB:5SBM:LVM4:2MOD:VEXL:ZFUD:24SV
 ➜  ~
 </pre></div>
 <p>Все работает.</p>
+<h1 id="">Работа с удаленными директориями</h1><p>Работа с удаленными директориями так же поддерживается так сказать "из коробки". Dlite автоматически примонтирует директорию /Users в гостевую машину. Если посмотреть корневую директорию на гостевой машине можно увидеть примонтированную директорию Users:</p>
+<div class="highlight"><pre><span></span>➜  ~ ssh docker@local.docker
+DhyveOS version 2.2.0
+Docker version 1.10.0, build 590d5108
+$ ls /
+Users    dev      home     lib      linuxrc  mnt      proc     run      sys      usr
+bin      etc      init     lib64    media    opt      root     sbin     tmp      var
+$
+</pre></div>
+<p>Поэтому у вас есть возможность сделать что то вроде этого:</p>
+<div class="highlight"><pre><span></span>docker run --rm <span class="se">\</span>
+--name web <span class="se">\</span>
+-v <span class="s2">&quot;/Users/&lt;username&gt;/webapp:/webapp&quot;</span> <span class="se">\</span>
+-it alpine sh
+</pre></div>
+<p>Директория <code>/Users/&lt;username&gt;/webapp</code> будет доступна в контейнере "web" по адресу <code>/webapp</code></p>
+<h1 id="">Немного полезной информации</h1><ol>
+<p>Dlite хранит файл настроек, включая образы системы в директории <code>~/.dlite</code></p>
+<p>После установки в файл /etc/hosts будет добавлена строка <code>192.168.64.2 local.docker # added by dlite</code></p>
+<p>По умолчанию, если не указывать параметры для команды docker, Docker будет использовать файл <code>/var/run/docker.sock</code> для соединения с гостевой машиной. Данный файл уже создает dlite.</p>
+<p>Подключиться к гостевой машине можно командой <code>ssh docker@local.docker</code></p>
+<p>Если вы переустановите dlite, то он будет использовать уже другой IP адрес. Например, если во время первой установки IP адрес был <code>192.168.64.2</code> после переустановки dlite IP будет заменен на 192.168.64.3. Чтобы этого избежать и вернуть старый IP можно удалить файл <code>/var/db/dhcpd_leases</code></p>
+<p>Запуск демона dlite из под tmux может не произойти, поэтому лучше этого не делать.</p>
+<p>После перезапуска системы dlite будет автоматически запущен</p>
+</ol>
 
   </div>
 
