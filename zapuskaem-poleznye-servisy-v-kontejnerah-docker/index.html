@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../static/font-awesome.min.css">
+    <link rel="stylesheet" href="../static/admonition-text.css">
+    <link rel="stylesheet" href="../static/pygments.css">
+    <title>Запускаем полезные сервисы в контейнерах docker</title>
+</head>
+<body>
+    <main>
+        
+  
+  <div class="blog-post">
+  
+    <h1>Запускаем полезные сервисы в контейнерах docker</h1>
+  
+  <p class="meta">
+    
+      <a href="https://twitter.com/ali_aliev">Ali Aliev</a>
+    
+    [2016-04-20]
+  </p>
+  
+  <p>Решил перенести все свои сервисы из хост машины в контейнеры Docker, что оказалось очень удобно. На данный момент я часто использую mysql(mariadb), postgresql, redis и memcached.</p>
+<p>Небольшой список команд для запуска контейнеров:</p>
+<div class="highlight"><pre><span></span><span class="c1"># PostgreSQL</span>
+➜  ~ docker run --name postgres -p 5432:5432 -d postgres
+➜  ~ psql -U postgres -h local.docker
+psql <span class="o">(</span>9.4.5, server 9.5.2<span class="o">)</span>
+WARNING: psql major version 9.4, server major version 9.5.
+         Some psql features might not work.
+Type <span class="s2">&quot;help&quot;</span> <span class="k">for</span> help.
+
+<span class="nv">postgres</span><span class="o">=</span><span class="c1">#</span>
+
+
+<span class="c1"># MySQL (MariaDB)</span>
+➜  ~ docker run --name mariadb -p 3306:3306 -e <span class="nv">MYSQL_ALLOW_EMPTY_PASSWORD</span><span class="o">=</span><span class="m">1</span> -d mariadb
+<span class="c1"># Опция MYSQL_ALLOW_EMPTY_PASSWORD=1 говорит о том, что нам не нужен пароль для авторизации</span>
+➜  ~ mysql -uroot -h local.docker
+Welcome to the MySQL monitor.  Commands end with <span class="p">;</span> or <span class="se">\g</span>.
+Your MySQL connection id is 3
+Server version: 5.5.5-10.1.13-MariaDB-1~jessie mariadb.org binary distribution
+
+Copyright <span class="o">(</span>c<span class="o">)</span> 2000, 2015, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type <span class="s1">&#39;help;&#39;</span> or <span class="s1">&#39;\h&#39;</span> <span class="k">for</span> help. Type <span class="s1">&#39;\c&#39;</span> to clear the current input statement.
+
+mysql&gt;
+
+<span class="c1"># Redis</span>
+➜  ~ docker run --name redis -p 6379:6379 -d redis
+
+<span class="c1"># Memcached</span>
+docker run --name memcached -p 11211:11211 -d memcached
+
+➜  ~ docker ps
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                           NAMES
+3c8f104cfa4e        mariadb             <span class="s2">&quot;/docker-entrypoint.s&quot;</span>   <span class="m">5</span> minutes ago       Up <span class="m">5</span> minutes        192.168.64.2:3306-&gt;3306/tcp     mariadb
+c7751e050c2e        postgres            <span class="s2">&quot;/docker-entrypoint.s&quot;</span>   <span class="m">13</span> minutes ago      Up <span class="m">13</span> minutes       192.168.64.2:5432-&gt;5432/tcp     postgres
+b787fe27a4d7        redis               <span class="s2">&quot;/entrypoint.sh redis&quot;</span>   About an hour ago   Up About an hour    192.168.64.2:6379-&gt;6379/tcp     redis
+f880a114121b        memcached           <span class="s2">&quot;/entrypoint.sh memca&quot;</span>   About an hour ago   Up About an hour    192.168.64.2:11211-&gt;11211/tcp   memcached
+➜  ~
+</pre></div>
+<p>Видно что контейнеры работают в фоновом режиме. Для каждого из контейнеров можно запустить команду exec и запустить например sh:</p>
+<div class="highlight"><pre><span></span>➜  ~ docker <span class="nb">exec</span> -it postgres bash
+root@c7751e050c2e:/# su postgres
+$ psql
+psql <span class="o">(</span>9.5.2<span class="o">)</span>
+Type <span class="s2">&quot;help&quot;</span> <span class="k">for</span> help.
+
+<span class="nv">postgres</span><span class="o">=</span><span class="c1">#</span>
+</pre></div>
+
+  </div>
+
+
+    </main>
+    <a href="https://github.com/aliev"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/82b228a3648bf44fc1163ef44c62fcc60081495e/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_red_aa0000.png"></a>
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-42591955-1', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+</body>
+</html>
