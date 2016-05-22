@@ -1,0 +1,44 @@
+title: Django меняем язык в зависимости от домена
+---
+author: Ali Aliev
+---
+body:
+
+Появилась задача менять язык интерфейса в зависимости от домена, который был прикреплен к сайту. Как оказалась решение данной задачи очень простое достаточно написать небольшой middleware.
+
+Для начала создадим в настройках settings.py следующий словарь, который мы будем использовать и читать:
+
+```python
+LANGUAGES_DOMAINS = {
+    'somedomain.com': 'en',
+}
+```
+
+далее код самого middleware:
+
+
+```python
+from django.conf import settings
+from django.utils import translation
+
+
+class DomainLocaleMiddleware(object):
+    """
+    Set language regarding of domain
+    """
+    def process_request(self, request):
+        if request.META.has_key('HTTP_ACCEPT_LANGUAGE'):
+            # Totally ignore the browser settings... 
+            del request.META['HTTP_ACCEPT_LANGUAGE']
+
+        current_domain = request.META['HTTP_HOST']
+        lang_code = settings.LANGUAGES_DOMAINS.get(current_domain)
+
+        if lang_code:
+            translation.activate(lang_code)
+            request.LANGUAGE_CODE = lang_code
+```
+---
+pub_date: 2016-05-18
+---
+twitter_handle: ali_aliev

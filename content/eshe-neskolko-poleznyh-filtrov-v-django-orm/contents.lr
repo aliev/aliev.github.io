@@ -1,0 +1,40 @@
+title: Еще несколько полезных фильтров в Django ORM
+---
+body:
+
+Показать события, которые будут проходить только в выходные дни:
+
+```python
+Evens.objects.filter(eventStarttime__week_day__in=[1, 7])
+```
+
+Показать события которые будут проходить только на этой неделе:
+
+```python
+date = datetime.date.today()
+start_week = date - datetime.timedelta(date.weekday())
+end_week = start_week + datetime.timedelta(7)
+Event.objects.filter(eventStarttime__range=[start_week, end_week])
+```
+
+Показать события, id которых дублируются
+
+```python
+Event.objects.values('eventId').annotate(Count('eventId')).filter(eventId__count__gt=1)
+```
+
+Показать события которые будут проходить сегодня
+
+```python
+import datetime
+today_min = datetime.datetime.combine(datetime.date.today(), datetime.time.min)
+today_max = datetime.datetime.combine(datetime.date.today(), datetime.time.max)
+
+Event.objects.filter(eventStarttime__range=[today_min, today_max])
+```
+---
+author: Ali Aliev
+---
+pub_date: 2016-05-18
+---
+twitter_handle: ali_aliev
