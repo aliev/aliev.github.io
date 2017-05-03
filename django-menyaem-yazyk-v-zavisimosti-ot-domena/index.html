@@ -22,14 +22,14 @@
     [2016-05-18]
   </p>
   
-  <p>Появилась задача менять язык интерфейса в зависимости от домена, который был прикреплен к сайту. Как оказалась решение данной задачи очень простое достаточно написать небольшой middleware.</p>
+  <p>Появилась задача менять язык интерфейса в зависимости от домена, который был прикреплен к сайту. Как оказалась решение данной задачи очень простое достаточно написать небольшой middleware</p>
 <p>Для начала создадим в настройках settings.py следующий словарь, который мы будем использовать и читать:</p>
-<div class="highlight"><pre><span class="n">LANGUAGES_DOMAINS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s">&#39;somedomain.com&#39;</span><span class="p">:</span> <span class="s">&#39;en&#39;</span><span class="p">,</span>
+<div class="highlight"><pre><span></span><span class="n">LANGUAGES_DOMAINS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;somedomain.com&#39;</span><span class="p">:</span> <span class="s1">&#39;en&#39;</span><span class="p">,</span>
 <span class="p">}</span>
 </pre></div>
 <p>далее код самого middleware:</p>
-<div class="highlight"><pre><span class="kn">from</span> <span class="nn">django.conf</span> <span class="kn">import</span> <span class="n">settings</span>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.conf</span> <span class="kn">import</span> <span class="n">settings</span>
 <span class="kn">from</span> <span class="nn">django.utils</span> <span class="kn">import</span> <span class="n">translation</span>
 
 
@@ -38,11 +38,11 @@
 <span class="sd">    Set language regarding of domain</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">process_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">META</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s">&#39;HTTP_ACCEPT_LANGUAGE&#39;</span><span class="p">):</span>
-            <span class="c"># Totally ignore the browser settings... </span>
-            <span class="k">del</span> <span class="n">request</span><span class="o">.</span><span class="n">META</span><span class="p">[</span><span class="s">&#39;HTTP_ACCEPT_LANGUAGE&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">META</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s1">&#39;HTTP_ACCEPT_LANGUAGE&#39;</span><span class="p">):</span>
+            <span class="c1"># Totally ignore the browser settings... </span>
+            <span class="k">del</span> <span class="n">request</span><span class="o">.</span><span class="n">META</span><span class="p">[</span><span class="s1">&#39;HTTP_ACCEPT_LANGUAGE&#39;</span><span class="p">]</span>
 
-        <span class="n">current_domain</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">META</span><span class="p">[</span><span class="s">&#39;HTTP_HOST&#39;</span><span class="p">]</span>
+        <span class="n">current_domain</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">META</span><span class="p">[</span><span class="s1">&#39;HTTP_HOST&#39;</span><span class="p">]</span>
         <span class="n">lang_code</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">LANGUAGES_DOMAINS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">current_domain</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">lang_code</span><span class="p">:</span>

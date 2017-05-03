@@ -40,11 +40,11 @@ brew install xhyve
 <p>После запуска можно сразу заметить знакомое приглашение о входе в систему</p>
 <div class="highlight"><pre><span></span>➜  docker-root-xhyve git:<span class="o">(</span>master<span class="o">)</span> sudo ./xhyverun.sh
 Password:
-<span class="s2">&quot;/Users/aliev&quot;</span> -network 192.168.64.0 -mask 255.255.255.0 -alldirs -mapall<span class="o">=</span>501:20
+<span class="s2">&quot;/Users/aliev&quot;</span> -network <span class="m">192</span>.168.64.0 -mask <span class="m">255</span>.255.255.0 -alldirs -mapall<span class="o">=</span><span class="m">501</span>:20
 Stopping the nfsd service <span class="o">(</span>use <span class="s1">&#39;disable&#39;</span> to make permanent<span class="o">)</span>
 Starting the nfsd service
 Starting DockerRoot VM
-rdmsr to register 0x34 on vcpu 0
+rdmsr to register 0x34 on vcpu <span class="m">0</span>
 
 Welcome to DockerRoot docker-root /dev/ttyS0
 docker-root login:
@@ -52,12 +52,12 @@ docker-root login:
 <p>Хочу заметить что у меня запускается все это дело в течении нескольких секунд (что очень быстро я считаю).</p>
 <p>Настройка виртуальной машины завершена, теперь хорошо бы обновить docker server на гостевой OC. Для этого проходим этап авторизации посредством ввода логина и пароля docker, вводим sudo su для получения прав суперпользователя и запускаем обновление докера следующей командой:</p>
 <div class="highlight"><pre><span></span><span class="o">[</span>root@docker-root docker<span class="o">]</span><span class="c1"># /etc/init.d/docker restart latest</span>
-docker<span class="o">[</span>328<span class="o">]</span>: Loading /var/lib/docker-root/profile
-docker<span class="o">[</span>328<span class="o">]</span>: Stopping Docker daemon
-docker<span class="o">[</span>328<span class="o">]</span>: Setting <span class="nb">ulimit</span> 1048576
-docker<span class="o">[</span>328<span class="o">]</span>: <span class="nv">DOCKER_RAMDISK</span><span class="o">=</span>
-docker<span class="o">[</span>328<span class="o">]</span>: Docker version 1.11.0, build 4dc5990
-docker<span class="o">[</span>328<span class="o">]</span>: Starting Docker daemon -D -s overlay -g <span class="s2">&quot;/var/lib/docker&quot;</span> -H unix:// -H tcp://0.0.0.0:2375 --userland-proxy<span class="o">=</span><span class="nb">false</span>
+docker<span class="o">[</span><span class="m">328</span><span class="o">]</span>: Loading /var/lib/docker-root/profile
+docker<span class="o">[</span><span class="m">328</span><span class="o">]</span>: Stopping Docker daemon
+docker<span class="o">[</span><span class="m">328</span><span class="o">]</span>: Setting <span class="nb">ulimit</span> <span class="m">1048576</span>
+docker<span class="o">[</span><span class="m">328</span><span class="o">]</span>: <span class="nv">DOCKER_RAMDISK</span><span class="o">=</span>
+docker<span class="o">[</span><span class="m">328</span><span class="o">]</span>: Docker version <span class="m">1</span>.11.0, build 4dc5990
+docker<span class="o">[</span><span class="m">328</span><span class="o">]</span>: Starting Docker daemon -D -s overlay -g <span class="s2">&quot;/var/lib/docker&quot;</span> -H unix:// -H tcp://0.0.0.0:2375 --userland-proxy<span class="o">=</span><span class="nb">false</span>
 <span class="o">[</span>root@docker-root docker<span class="o">]</span><span class="c1">#</span>
 </pre></div>
 <p>Скрипт обновил и перезапустил наш docker server. Мы полностью завершили настройку гостевой OC для хранения и запуска наших контейнеров, теперь пришло время немного настроить клиент docker. Мы уже его установили через brew.</p>
@@ -66,22 +66,22 @@ docker<span class="o">[</span>328<span class="o">]</span>: Starting Docker daemo
 </pre></div>
 <p>IP адрес необходимо заметить на ip адрес гостевой OC, который можно получить запустив команду ifconfig:</p>
 <div class="highlight"><pre><span></span><span class="o">[</span>root@docker-root docker<span class="o">]</span><span class="c1"># ifconfig</span>
-docker0   Link encap:Ethernet  HWaddr 02:42:7F:53:DC:B8
+docker0   Link encap:Ethernet  HWaddr <span class="m">02</span>:42:7F:53:DC:B8
           inet addr:172.17.0.1  Bcast:0.0.0.0  Mask:255.255.0.0
           UP BROADCAST MULTICAST  MTU:1500  Metric:1
           RX packets:0 errors:0 dropped:0 overruns:0 frame:0
           TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
           collisions:0 txqueuelen:0
-          RX bytes:0 <span class="o">(</span>0.0 B<span class="o">)</span>  TX bytes:0 <span class="o">(</span>0.0 B<span class="o">)</span>
+          RX bytes:0 <span class="o">(</span><span class="m">0</span>.0 B<span class="o">)</span>  TX bytes:0 <span class="o">(</span><span class="m">0</span>.0 B<span class="o">)</span>
 
-eth0      Link encap:Ethernet  HWaddr 32:70:CB:56:CF:32
+eth0      Link encap:Ethernet  HWaddr <span class="m">32</span>:70:CB:56:CF:32
           inet addr:192.168.64.14  Bcast:192.168.64.255  Mask:255.255.255.0
           inet6 addr: fe80::3070:cbff:fe56:cf32/64 Scope:Link
           UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
           RX packets:93 errors:0 dropped:0 overruns:0 frame:0
           TX packets:75 errors:0 dropped:0 overruns:0 carrier:0
           collisions:0 txqueuelen:1000
-          RX bytes:36874 <span class="o">(</span>36.0 KiB<span class="o">)</span>  TX bytes:7535 <span class="o">(</span>7.3 KiB<span class="o">)</span>
+          RX bytes:36874 <span class="o">(</span><span class="m">36</span>.0 KiB<span class="o">)</span>  TX bytes:7535 <span class="o">(</span><span class="m">7</span>.3 KiB<span class="o">)</span>
 
 lo        Link encap:Local Loopback
           inet addr:127.0.0.1  Mask:255.0.0.0
@@ -90,7 +90,7 @@ lo        Link encap:Local Loopback
           RX packets:0 errors:0 dropped:0 overruns:0 frame:0
           TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
           collisions:0 txqueuelen:1
-          RX bytes:0 <span class="o">(</span>0.0 B<span class="o">)</span>  TX bytes:0 <span class="o">(</span>0.0 B<span class="o">)</span>
+          RX bytes:0 <span class="o">(</span><span class="m">0</span>.0 B<span class="o">)</span>  TX bytes:0 <span class="o">(</span><span class="m">0</span>.0 B<span class="o">)</span>
 
 <span class="o">[</span>root@docker-root docker<span class="o">]</span><span class="c1">#</span>
 </pre></div>
@@ -109,32 +109,32 @@ Digest: sha256:9cacb71397b640eca97488cf08582ae4e4068513101088e9f96c9814bfda95e0
 Status: Downloaded newer image <span class="k">for</span> alpine:latest
 ➜  ~ docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
-alpine              latest              d7a513a663c1        <span class="m">13</span> days ago         4.794 MB
+alpine              latest              d7a513a663c1        <span class="m">13</span> days ago         <span class="m">4</span>.794 MB
 ➜  ~
 </pre></div>
 <p>Запустим командную оболочку</p>
 <div class="highlight"><pre><span></span>➜  ~ docker run -it alpine sh
 / <span class="c1"># ls -la</span>
-total 56
-drwxr-xr-x    <span class="m">1</span> root     root          <span class="m">4096</span> Apr <span class="m">15</span> 20:46 .
-drwxr-xr-x    <span class="m">1</span> root     root          <span class="m">4096</span> Apr <span class="m">15</span> 20:46 ..
--rwxr-xr-x    <span class="m">1</span> root     root             <span class="m">0</span> Apr <span class="m">15</span> 20:46 .dockerenv
-drwxr-xr-x    <span class="m">2</span> root     root          <span class="m">4096</span> Apr  <span class="m">1</span> 18:56 bin
-drwxr-xr-x    <span class="m">5</span> root     root           <span class="m">360</span> Apr <span class="m">15</span> 20:46 dev
-drwxr-xr-x    <span class="m">1</span> root     root          <span class="m">4096</span> Apr <span class="m">15</span> 20:46 etc
-drwxr-xr-x    <span class="m">2</span> root     root          <span class="m">4096</span> Apr  <span class="m">1</span> 18:56 home
-drwxr-xr-x    <span class="m">5</span> root     root          <span class="m">4096</span> Apr  <span class="m">1</span> 18:56 lib
-lrwxrwxrwx    <span class="m">1</span> root     root            <span class="m">12</span> Apr  <span class="m">1</span> 18:56 linuxrc -&gt; /bin/busybox
-drwxr-xr-x    <span class="m">5</span> root     root          <span class="m">4096</span> Apr  <span class="m">1</span> 18:56 media
-drwxr-xr-x    <span class="m">2</span> root     root          <span class="m">4096</span> Apr  <span class="m">1</span> 18:56 mnt
-dr-xr-xr-x   <span class="m">76</span> root     root             <span class="m">0</span> Apr <span class="m">15</span> 20:46 proc
-drwx------    <span class="m">1</span> root     root          <span class="m">4096</span> Apr <span class="m">15</span> 20:46 root
-drwxr-xr-x    <span class="m">2</span> root     root          <span class="m">4096</span> Apr  <span class="m">1</span> 18:56 run
-drwxr-xr-x    <span class="m">2</span> root     root          <span class="m">4096</span> Apr  <span class="m">1</span> 18:56 sbin
-dr-xr-xr-x   <span class="m">13</span> root     root             <span class="m">0</span> Apr <span class="m">15</span> 20:46 sys
-drwxrwxrwt    <span class="m">2</span> root     root          <span class="m">4096</span> Apr  <span class="m">1</span> 18:56 tmp
-drwxr-xr-x    <span class="m">7</span> root     root          <span class="m">4096</span> Apr  <span class="m">1</span> 18:56 usr
-drwxr-xr-x   <span class="m">10</span> root     root          <span class="m">4096</span> Apr  <span class="m">1</span> 18:56 var
+total <span class="m">56</span>
+drwxr-xr-x    <span class="m">1</span> root     root          <span class="m">4096</span> Apr <span class="m">15</span> <span class="m">20</span>:46 .
+drwxr-xr-x    <span class="m">1</span> root     root          <span class="m">4096</span> Apr <span class="m">15</span> <span class="m">20</span>:46 ..
+-rwxr-xr-x    <span class="m">1</span> root     root             <span class="m">0</span> Apr <span class="m">15</span> <span class="m">20</span>:46 .dockerenv
+drwxr-xr-x    <span class="m">2</span> root     root          <span class="m">4096</span> Apr  <span class="m">1</span> <span class="m">18</span>:56 bin
+drwxr-xr-x    <span class="m">5</span> root     root           <span class="m">360</span> Apr <span class="m">15</span> <span class="m">20</span>:46 dev
+drwxr-xr-x    <span class="m">1</span> root     root          <span class="m">4096</span> Apr <span class="m">15</span> <span class="m">20</span>:46 etc
+drwxr-xr-x    <span class="m">2</span> root     root          <span class="m">4096</span> Apr  <span class="m">1</span> <span class="m">18</span>:56 home
+drwxr-xr-x    <span class="m">5</span> root     root          <span class="m">4096</span> Apr  <span class="m">1</span> <span class="m">18</span>:56 lib
+lrwxrwxrwx    <span class="m">1</span> root     root            <span class="m">12</span> Apr  <span class="m">1</span> <span class="m">18</span>:56 linuxrc -&gt; /bin/busybox
+drwxr-xr-x    <span class="m">5</span> root     root          <span class="m">4096</span> Apr  <span class="m">1</span> <span class="m">18</span>:56 media
+drwxr-xr-x    <span class="m">2</span> root     root          <span class="m">4096</span> Apr  <span class="m">1</span> <span class="m">18</span>:56 mnt
+dr-xr-xr-x   <span class="m">76</span> root     root             <span class="m">0</span> Apr <span class="m">15</span> <span class="m">20</span>:46 proc
+drwx------    <span class="m">1</span> root     root          <span class="m">4096</span> Apr <span class="m">15</span> <span class="m">20</span>:46 root
+drwxr-xr-x    <span class="m">2</span> root     root          <span class="m">4096</span> Apr  <span class="m">1</span> <span class="m">18</span>:56 run
+drwxr-xr-x    <span class="m">2</span> root     root          <span class="m">4096</span> Apr  <span class="m">1</span> <span class="m">18</span>:56 sbin
+dr-xr-xr-x   <span class="m">13</span> root     root             <span class="m">0</span> Apr <span class="m">15</span> <span class="m">20</span>:46 sys
+drwxrwxrwt    <span class="m">2</span> root     root          <span class="m">4096</span> Apr  <span class="m">1</span> <span class="m">18</span>:56 tmp
+drwxr-xr-x    <span class="m">7</span> root     root          <span class="m">4096</span> Apr  <span class="m">1</span> <span class="m">18</span>:56 usr
+drwxr-xr-x   <span class="m">10</span> root     root          <span class="m">4096</span> Apr  <span class="m">1</span> <span class="m">18</span>:56 var
 / <span class="c1">#</span>
 </pre></div>
 <p>Круто, все работает :)</p>

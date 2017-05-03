@@ -243,7 +243,7 @@ git push heroku master
             <span class="n">data</span><span class="p">[</span><span class="s1">&#39;success&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
 
 
-        <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cls</span><span class="o">=</span><span class="n">DecimalEncoder</span><span class="p">),</span>
+        <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">DecimalEncoder</span><span class="p">),</span>
                             <span class="n">status</span><span class="o">=</span><span class="n">status_code</span><span class="p">,</span>
                             <span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;application/json&#39;</span><span class="p">)</span>
 </pre></div>

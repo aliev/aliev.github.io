@@ -25,10 +25,10 @@
   <p>Решил перенести все свои сервисы из хост машины в контейнеры Docker, что оказалось очень удобно. На данный момент я часто использую mysql(mariadb), postgresql, redis и memcached.</p>
 <p>Небольшой список команд для запуска контейнеров:</p>
 <div class="highlight"><pre><span></span><span class="c1"># PostgreSQL</span>
-➜  ~ docker run --name postgres -p 5432:5432 -d postgres
+➜  ~ docker run --name postgres -p <span class="m">5432</span>:5432 -d postgres
 ➜  ~ psql -U postgres -h local.docker
-psql <span class="o">(</span>9.4.5, server 9.5.2<span class="o">)</span>
-WARNING: psql major version 9.4, server major version 9.5.
+psql <span class="o">(</span><span class="m">9</span>.4.5, server <span class="m">9</span>.5.2<span class="o">)</span>
+WARNING: psql major version <span class="m">9</span>.4, server major version <span class="m">9</span>.5.
          Some psql features might not work.
 Type <span class="s2">&quot;help&quot;</span> <span class="k">for</span> help.
 
@@ -36,14 +36,14 @@ Type <span class="s2">&quot;help&quot;</span> <span class="k">for</span> help.
 
 
 <span class="c1"># MySQL (MariaDB)</span>
-➜  ~ docker run --name mariadb -p 3306:3306 -e <span class="nv">MYSQL_ALLOW_EMPTY_PASSWORD</span><span class="o">=</span><span class="m">1</span> -d mariadb
+➜  ~ docker run --name mariadb -p <span class="m">3306</span>:3306 -e <span class="nv">MYSQL_ALLOW_EMPTY_PASSWORD</span><span class="o">=</span><span class="m">1</span> -d mariadb
 <span class="c1"># Опция MYSQL_ALLOW_EMPTY_PASSWORD=1 говорит о том, что нам не нужен пароль для авторизации</span>
 ➜  ~ mysql -uroot -h local.docker
 Welcome to the MySQL monitor.  Commands end with <span class="p">;</span> or <span class="se">\g</span>.
-Your MySQL connection id is 3
-Server version: 5.5.5-10.1.13-MariaDB-1~jessie mariadb.org binary distribution
+Your MySQL connection id is <span class="m">3</span>
+Server version: <span class="m">5</span>.5.5-10.1.13-MariaDB-1~jessie mariadb.org binary distribution
 
-Copyright <span class="o">(</span>c<span class="o">)</span> 2000, 2015, Oracle and/or its affiliates. All rights reserved.
+Copyright <span class="o">(</span>c<span class="o">)</span> <span class="m">2000</span>, <span class="m">2015</span>, Oracle and/or its affiliates. All rights reserved.
 
 Oracle is a registered trademark of Oracle Corporation and/or its
 affiliates. Other names may be trademarks of their respective
@@ -54,24 +54,24 @@ Type <span class="s1">&#39;help;&#39;</span> or <span class="s1">&#39;\h&#39;</s
 mysql&gt;
 
 <span class="c1"># Redis</span>
-➜  ~ docker run --name redis -p 6379:6379 -d redis
+➜  ~ docker run --name redis -p <span class="m">6379</span>:6379 -d redis
 
 <span class="c1"># Memcached</span>
-docker run --name memcached -p 11211:11211 -d memcached
+docker run --name memcached -p <span class="m">11211</span>:11211 -d memcached
 
 ➜  ~ docker ps
 CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                           NAMES
-3c8f104cfa4e        mariadb             <span class="s2">&quot;/docker-entrypoint.s&quot;</span>   <span class="m">5</span> minutes ago       Up <span class="m">5</span> minutes        192.168.64.2:3306-&gt;3306/tcp     mariadb
-c7751e050c2e        postgres            <span class="s2">&quot;/docker-entrypoint.s&quot;</span>   <span class="m">13</span> minutes ago      Up <span class="m">13</span> minutes       192.168.64.2:5432-&gt;5432/tcp     postgres
-b787fe27a4d7        redis               <span class="s2">&quot;/entrypoint.sh redis&quot;</span>   About an hour ago   Up About an hour    192.168.64.2:6379-&gt;6379/tcp     redis
-f880a114121b        memcached           <span class="s2">&quot;/entrypoint.sh memca&quot;</span>   About an hour ago   Up About an hour    192.168.64.2:11211-&gt;11211/tcp   memcached
+3c8f104cfa4e        mariadb             <span class="s2">&quot;/docker-entrypoint.s&quot;</span>   <span class="m">5</span> minutes ago       Up <span class="m">5</span> minutes        <span class="m">192</span>.168.64.2:3306-&gt;3306/tcp     mariadb
+c7751e050c2e        postgres            <span class="s2">&quot;/docker-entrypoint.s&quot;</span>   <span class="m">13</span> minutes ago      Up <span class="m">13</span> minutes       <span class="m">192</span>.168.64.2:5432-&gt;5432/tcp     postgres
+b787fe27a4d7        redis               <span class="s2">&quot;/entrypoint.sh redis&quot;</span>   About an hour ago   Up About an hour    <span class="m">192</span>.168.64.2:6379-&gt;6379/tcp     redis
+f880a114121b        memcached           <span class="s2">&quot;/entrypoint.sh memca&quot;</span>   About an hour ago   Up About an hour    <span class="m">192</span>.168.64.2:11211-&gt;11211/tcp   memcached
 ➜  ~
 </pre></div>
 <p>Видно что контейнеры работают в фоновом режиме. Для каждого из контейнеров можно запустить команду exec и запустить например sh:</p>
 <div class="highlight"><pre><span></span>➜  ~ docker <span class="nb">exec</span> -it postgres bash
 root@c7751e050c2e:/# su postgres
 $ psql
-psql <span class="o">(</span>9.5.2<span class="o">)</span>
+psql <span class="o">(</span><span class="m">9</span>.5.2<span class="o">)</span>
 Type <span class="s2">&quot;help&quot;</span> <span class="k">for</span> help.
 
 <span class="nv">postgres</span><span class="o">=</span><span class="c1">#</span>
