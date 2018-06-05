@@ -1,4 +1,4 @@
-@import url(https://fonts.googleapis.com/css?family=Merriweather:400,400italic,700);
+@import url('../fonts/FiraCode-Regular.eot');
 .black { color: #111; }
 
 .gray { color: #aaa; }
@@ -33,7 +33,7 @@
 
 .maroon { color: #85144b; }
 
-body { margin: 0; font-family: Merriweather, Helvetica, Arial, sans-serif; font-size: 16px; line-height: 1.5; color: #333; }
+body { margin: 0; font-family: Fira Code; font-size: 16px; line-height: 1.5; color: #333; }
 
 p { text-align: justify; word-break: break-word; }
 
@@ -56,7 +56,9 @@ td { vertical-align: top; border-bottom: 1px solid #ddd; }
 
 pre { padding: 1.25rem; overflow-x: auto; }
 
-code { font-family: 'Courier New',Consolas,monopace; tab-size: 4; }
+code { font-family: Fira Code; tab-size: 4; }
+
+pre, xmp, plaintext, listing { font-family: Fira Code; tab-size: 4; }
 
 hr { border: none; border-top: 2px solid #ddd; }
 
