@@ -1,9 +1,10 @@
-/* @import url('../fonts/FiraCode-Regular.eot'); */
 @font-face {
   font-family: 'Fira Code';
-  src: url('/fonts/FiraCode-Regular.eot'); /* IE9 Compat Modes */
-  src: url('/fonts/FiraCode-Regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  font-style: normal;
+  font-weight: 400;
+  src: local('Fira Code Regular'), local('FiraCode-Regular'), url(/fonts/FiraCode-Regular.woff2) format('woff2');
 }
+
 .black { color: #111; }
 
 .gray { color: #aaa; }
