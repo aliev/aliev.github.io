@@ -1,4 +1,9 @@
-@import url('../fonts/FiraCode-Regular.eot');
+/* @import url('../fonts/FiraCode-Regular.eot'); */
+@font-face {
+  font-family: 'Fira Code';
+  src: url('/fonts/FiraCode-Regular.eot'); /* IE9 Compat Modes */
+  src: url('/fonts/FiraCode-Regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+}
 .black { color: #111; }
 
 .gray { color: #aaa; }
