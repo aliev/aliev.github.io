@@ -36,5 +36,3 @@ Event.objects.filter(eventStarttime__range=[today_min, today_max])
 author: Ali Aliev
 ---
 pub_date: 2016-05-18
----
-twitter_handle: ali_aliev

@@ -6,11 +6,7 @@
     <h1>{{ post.title }}</h1>
   {% endif %}
   <p class="meta">
-    {% if post.twitter_handle %}
-      <a href="https://twitter.com/{{ post.twitter_handle}}">{{ post.author or post.twitter_handle }}</a>
-    {% else %}
-      {{ post.author }}
-    {% endif %}
+    {{ post.author }}
     [{{ post.pub_date }}]
   </p>
   {% if post.body.toc %}

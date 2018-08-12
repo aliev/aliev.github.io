@@ -28,7 +28,7 @@ class DomainLocaleMiddleware(object):
     """
     def process_request(self, request):
         if request.META.has_key('HTTP_ACCEPT_LANGUAGE'):
-            # Totally ignore the browser settings... 
+            # Totally ignore the browser settings...
             del request.META['HTTP_ACCEPT_LANGUAGE']
 
         current_domain = request.META['HTTP_HOST']
@@ -40,5 +40,3 @@ class DomainLocaleMiddleware(object):
 ```
 ---
 pub_date: 2016-05-18
----
-twitter_handle: ali_aliev

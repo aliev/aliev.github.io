@@ -45,5 +45,3 @@ SELECT "example_article"."id", "example_article"."content", "example_article"."c
 author: Ali Aliev
 ---
 pub_date: 2015-06-03
----
-twitter_handle: ali_aliev

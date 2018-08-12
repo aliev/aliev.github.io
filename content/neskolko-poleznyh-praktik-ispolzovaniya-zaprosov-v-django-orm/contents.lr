@@ -53,5 +53,3 @@ if users.exists():
 ```
 ---
 pub_date: 2015-06-21
----
-twitter_handle: ali_aliev

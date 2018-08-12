@@ -1,6 +1,6 @@
 title: Работа с Yelp API и добавление недостающих данных из Google Places API
 ---
-description: 
+description:
 ---
 body:
 
@@ -256,7 +256,7 @@ def get_google_instance(google_key):
     return google_instance
 ```
 
-Пришло время реализовать наше представление. Для начала создадим базовое представление, от которого мы будем наследоваться в файле src/core/views.py. 
+Пришло время реализовать наше представление. Для начала создадим базовое представление, от которого мы будем наследоваться в файле src/core/views.py.
 
 ```python
 import json
@@ -363,5 +363,3 @@ class ApiListView(ApiFormView):
 author: Ali Aliev
 ---
 pub_date: 2016-03-27
----
-twitter_handle: ali_aliev

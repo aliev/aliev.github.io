@@ -98,5 +98,3 @@ docker run --rm \
 7. После перезапуска системы dlite будет автоматически запущен
 ---
 pub_date: 2016-04-17
----
-twitter_handle: ali_aliev
