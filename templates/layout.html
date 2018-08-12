@@ -9,13 +9,15 @@
 </head>
 <body>
     <main>
-        {% block body %}{% endblock %}
         <div class="text-center">
-            <span align="center"><a href="https://twitter.com/ali_aliev" target="_blank">[Twitter]</a></span>
-            <span align="center"><a href="https://t.me/ali_aliev" target="_blank">[Telegram]</a></span>
-            <span align="center"><a href="https://github.com/aliev" target="_blank">[GitHub]</a></span>
-            <span align="center"><a href="https://www.linkedin.com/in/alialiev/" target="_blank">[Linkedin]</a></span>
+            <span align="center"><a href="/"><i class="fa fa-home" aria-hidden="true"></i></a></span>
+            <<- Subscribe and follow ->>
+            <span align="center"><a href="https://t.me/ali_aliev" target="_blank"><i class="fa fa-telegram" aria-hidden="true"></i></a></span>
+            <span align="center"><a href="https://twitter.com/ali_aliev" target="_blank"><i class="fa fa-twitter" aria-hidden="true"></i></a></span>
+            <span align="center"><a href="https://github.com/aliev" target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a></span>
+            <span align="center"><a href="https://www.linkedin.com/in/alialiev/" target="_blank"><i class="fa fa-linkedin" aria-hidden="true"></i></a></span>
         </div>
+        {% block body %}{% endblock %}
     </main>
     <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
