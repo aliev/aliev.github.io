@@ -6,11 +6,13 @@
     <h1>{{ post.title }}</h1>
   {% endif %}
   <p class="meta">
-    {{ post.author }}
+    Ali Aliyev
     [{{ post.pub_date }}]
   </p>
   {% if post.body.toc %}
-  <h1>Table Of Contents</h1>
+    {% if post.toc %}
+      <h1>{{ post.toc }}</h1>
+    {% endif %}
   <ul class="toc">
       {% for item in post.body.toc recursive %}
       <li><a href="#{{ item.anchor }}">{{ item.title }}</a>{%
