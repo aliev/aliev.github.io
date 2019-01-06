@@ -4,30 +4,24 @@
     <link rel="stylesheet" href="../static/style.css">
     <link rel="stylesheet" href="../static/font-awesome.min.css">
     <link rel="stylesheet" href="../static/admonition-text.css">
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
 
     <title>Несколько полезных практик использования запросов в Django ORM</title>
 </head>
 <body>
     <main>
-        <div class="text-center">
-            <a href="/"><<-</a> Subscribe and follow {
-            <span align="center"><a href="https://t.me/ali_aliev" target="_blank"><i class="fa fa-telegram" aria-hidden="true"></i></a></span>
-            <span align="center"><a href="https://twitter.com/ali_aliev" target="_blank"><i class="fa fa-twitter" aria-hidden="true"></i></a></span>
-            <span align="center"><a href="https://github.com/aliev" target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a></span>
-            <span align="center"><a href="https://www.linkedin.com/in/alialiev/" target="_blank"><i class="fa fa-linkedin" aria-hidden="true"></i></a></span> }
-        </div>
         
   
   <div class="blog-post">
   
-    <h1>Несколько полезных практик использования запросов в Django ORM</h1>
+    <h1><a href="/"><-</a>&nbsp;Несколько полезных практик использования запросов в Django ORM</h1>
   
   <p class="meta">
-    Ali Aliev
+    Ali Aliyev
     [2015-06-21]
   </p>
   
-  <h1>Table Of Contents</h1>
+    
   <ul class="toc">
       
       <li><a href="#select_related">select_related()</a>
@@ -60,8 +54,8 @@
 </pre></div>
 <h1 id="exists-iterator">Комбинирование методов exists() и iterator()</h1><p>Комбинирование двух этих методов позволит нам:</p>
 <ol>
-<p>Проверить существуют ли записи в таблице без получения этих данных (exists)</p>
-<p>Если записи существуют, получить их порциями (iterator)</p>
+<li>Проверить существуют ли записи в таблице без получения этих данных (exists)</li>
+<li>Если записи существуют, получить их порциями (iterator)</li>
 </ol>
 <p>Пример:</p>
 <div class="highlight"><pre><span></span><span class="n">users</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
@@ -72,6 +66,9 @@
 
   </div>
 
+  <a href="https://twitter.com/intent/tweet?screen_name=ali_aliev&ref_src=twsrc%5Etfw" class="twitter-mention-button"
+    data-show-count="false">Tweet to @ali_aliev</a>
+  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
     </main>
     <script>

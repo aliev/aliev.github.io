@@ -4,30 +4,24 @@
     <link rel="stylesheet" href="../static/style.css">
     <link rel="stylesheet" href="../static/font-awesome.min.css">
     <link rel="stylesheet" href="../static/admonition-text.css">
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
 
     <title>Dlite - Docker с человеческим лицом в OS X</title>
 </head>
 <body>
     <main>
-        <div class="text-center">
-            <a href="/"><<-</a> Subscribe and follow {
-            <span align="center"><a href="https://t.me/ali_aliev" target="_blank"><i class="fa fa-telegram" aria-hidden="true"></i></a></span>
-            <span align="center"><a href="https://twitter.com/ali_aliev" target="_blank"><i class="fa fa-twitter" aria-hidden="true"></i></a></span>
-            <span align="center"><a href="https://github.com/aliev" target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a></span>
-            <span align="center"><a href="https://www.linkedin.com/in/alialiev/" target="_blank"><i class="fa fa-linkedin" aria-hidden="true"></i></a></span> }
-        </div>
         
   
   <div class="blog-post">
   
-    <h1>Dlite - Docker с человеческим лицом в OS X</h1>
+    <h1><a href="/"><-</a>&nbsp;Dlite - Docker с человеческим лицом в OS X</h1>
   
   <p class="meta">
-    Ali Aliev
+    Ali Aliyev
     [2016-04-17]
   </p>
   
-  <h1>Table Of Contents</h1>
+    
   <ul class="toc">
       
       <li><a href="#">Введение</a>
@@ -40,8 +34,8 @@
       
   </ul>
   
-  <h1 id="">Введение</h1><p>Как оказалось существует более простой и удобный способ установки Docker в OS X. Маленькая утилита под названием <a href="https://github.com/nlf/dlite">Dlite</a>. В <a href="/docker-s-chelovecheskim-licom-v-mac-os">предыдущем</a> посте я писал о том, как установить и настроить Docker под OS X без использования VirtualBox, что сэкономит достаточно места на жестком диске и памяти.</p>
-<h1 id="">Установка</h1><p><a href="https://github.com/nlf/dlite">Dlite</a> это маленькая утилита написанная на языке Go и использующая libxhyve для управления гипервизиром xhyve, о котором я так же писал в предыдущем <a href="/docker-s-chelovecheskim-licom-v-mac-os/">посте</a>. Она установит и настроит все необходимое для работы с докером. Все что необходимо сделать - это скачать бинарник dlite по ссылке <a href="https://github.com/nlf/dlite/releases">https://github.com/nlf/dlite/releases</a> и кинуть куда нибудь в /usr/local/bin/, а затем запустить <code>sudo dlite install</code> и <code>dlite start</code>. Виртуальная машина будет автоматически активироваться после перезагрузки системы, что согласитесь очень удобно.</p>
+  <h1 id="">Введение</h1><p>Как оказалось существует более простой и удобный способ установки Docker в OS X. Маленькая утилита под названием <a href="https://github.com/nlf/dlite">Dlite</a>. В <a href="../docker-s-chelovecheskim-licom-v-mac-os">предыдущем</a> посте я писал о том, как установить и настроить Docker под OS X без использования VirtualBox, что сэкономит достаточно места на жестком диске и памяти.</p>
+<h1 id="">Установка</h1><p><a href="https://github.com/nlf/dlite">Dlite</a> это маленькая утилита написанная на языке Go и использующая libxhyve для управления гипервизиром xhyve, о котором я так же писал в предыдущем <a href="../docker-s-chelovecheskim-licom-v-mac-os/">посте</a>. Она установит и настроит все необходимое для работы с докером. Все что необходимо сделать - это скачать бинарник dlite по ссылке <a href="https://github.com/nlf/dlite/releases">https://github.com/nlf/dlite/releases</a> и кинуть куда нибудь в /usr/local/bin/, а затем запустить <code>sudo dlite install</code> и <code>dlite start</code>. Виртуальная машина будет автоматически активироваться после перезагрузки системы, что согласитесь очень удобно.</p>
 <p>Для работы с контейнерами докера вам будет доступен хост <code>local.docker</code>, после установки. Так же можно подключиться к данному хосту по ssh:</p>
 <div class="highlight"><pre><span></span>➜  ~ ssh docker@local.docker
 DhyveOS version <span class="m">2</span>.2.0
@@ -98,17 +92,20 @@ $
 </pre></div>
 <p>Директория <code>/Users/&lt;username&gt;/webapp</code> будет доступна в контейнере "web" по адресу <code>/webapp</code></p>
 <h1 id="">Немного полезной информации</h1><ol>
-<p>Dlite хранит файл настроек, включая образы системы в директории <code>~/.dlite</code></p>
-<p>После установки в файл /etc/hosts будет добавлена строка <code>192.168.64.2 local.docker # added by dlite</code></p>
-<p>По умолчанию, если не указывать параметры для команды docker, Docker будет использовать файл <code>/var/run/docker.sock</code> для соединения с гостевой машиной. Данный файл уже создает dlite.</p>
-<p>Подключиться к гостевой машине можно командой <code>ssh docker@local.docker</code></p>
-<p>Если вы переустановите dlite, то он будет использовать уже другой IP адрес. Например, если во время первой установки IP адрес был <code>192.168.64.2</code> после переустановки dlite IP будет заменен на 192.168.64.3. Чтобы этого избежать и вернуть старый IP можно удалить файл <code>/var/db/dhcpd_leases</code></p>
-<p>Запуск демона dlite из под tmux может не произойти, поэтому лучше этого не делать.</p>
-<p>После перезапуска системы dlite будет автоматически запущен</p>
+<li>Dlite хранит файл настроек, включая образы системы в директории <code>~/.dlite</code></li>
+<li>После установки в файл /etc/hosts будет добавлена строка <code>192.168.64.2 local.docker # added by dlite</code></li>
+<li>По умолчанию, если не указывать параметры для команды docker, Docker будет использовать файл <code>/var/run/docker.sock</code> для соединения с гостевой машиной. Данный файл уже создает dlite.</li>
+<li>Подключиться к гостевой машине можно командой <code>ssh docker@local.docker</code></li>
+<li>Если вы переустановите dlite, то он будет использовать уже другой IP адрес. Например, если во время первой установки IP адрес был <code>192.168.64.2</code> после переустановки dlite IP будет заменен на 192.168.64.3. Чтобы этого избежать и вернуть старый IP можно удалить файл <code>/var/db/dhcpd_leases</code></li>
+<li>Запуск демона dlite из под tmux может не произойти, поэтому лучше этого не делать.</li>
+<li>После перезапуска системы dlite будет автоматически запущен</li>
 </ol>
 
   </div>
 
+  <a href="https://twitter.com/intent/tweet?screen_name=ali_aliev&ref_src=twsrc%5Etfw" class="twitter-mention-button"
+    data-show-count="false">Tweet to @ali_aliev</a>
+  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
     </main>
     <script>
