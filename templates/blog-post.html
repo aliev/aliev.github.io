@@ -1,6 +1,14 @@
 {% extends "layout.html" %}
 {% from "macros/blog.html" import render_blog_post %}
 {% block title %}{{ this.title }}{{ super() }}{% endblock %}
+{% block og_description %}{{ this.description }}{% endblock %}
+
+{% block description %}{{ this.description }}{% endblock %}
+
+{% block og_title %}{{ this.title }}{% endblock %}
+
+{% block og_url %}https://aliev.me{{ this._path }}{% endblock %}
+
 {% block body %}
   {{ render_blog_post(this) }}
   <a href="https://twitter.com/intent/tweet?screen_name=ali_aliev&ref_src=twsrc%5Etfw" class="twitter-mention-button"
